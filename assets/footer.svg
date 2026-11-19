@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 140" width="1200" height="140" fill="none" role="img" aria-label="Footer">
+  <defs>
+    <linearGradient id="footerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#040711" />
+      <stop offset="50%" stop-color="#080E1C" />
+      <stop offset="100%" stop-color="#040711" />
+    </linearGradient>
+    <linearGradient id="footerLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F2FE" stop-opacity="0" />
+      <stop offset="30%" stop-color="#00F2FE" stop-opacity="0.6" />
+      <stop offset="70%" stop-color="#8B5CF6" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="140" rx="16" fill="url(#footerBg)" />
+  <rect width="1200" height="140" rx="16" stroke="#1E293B" stroke-width="1.2" />
+
+  <line x1="60" y1="20" x2="1140" y2="20" stroke="url(#footerLineGrad)" stroke-width="1" />
+
+  <!-- Center Status -->
+  <g text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', monospace">
+    <text x="600" y="52" fill="#00F2FE" font-size="11" letter-spacing="2.5" font-weight="600">
+      ● RUNTIME: CONTINUOUS SIMULATION &amp; AIR-GAPPED EXPERIMENTATION
+    </text>
+    <text x="600" y="80" fill="#E2E8F0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" font-weight="500" letter-spacing="0.2">
+      “Curiosity is the roadmap. Deterministic execution is the proof.”
+    </text>
+    <text x="600" y="108" fill="#64748B" font-size="10" letter-spacing="1.8">
+      KRISHNA CHAITANYA // SCALER SCHOOL OF TECHNOLOGY &amp; BITS PILANI // BANGALORE, INDIA
+    </text>
+  </g>
+</svg>

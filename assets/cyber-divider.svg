@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 24" width="1200" height="24" fill="none" role="img" aria-label="Divider">
+  <defs>
+    <linearGradient id="divGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F2FE" stop-opacity="0" />
+      <stop offset="25%" stop-color="#00F2FE" stop-opacity="0.3" />
+      <stop offset="48%" stop-color="#38BDF8" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="1" />
+      <stop offset="52%" stop-color="#8B5CF6" stop-opacity="0.9" />
+      <stop offset="75%" stop-color="#8B5CF6" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0" />
+    </linearGradient>
+    <filter id="divGlow" x="-20%" y="-100%" width="140%" height="300%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Horizontal Axis Line -->
+  <line x1="40" y1="12" x2="1160" y2="12" stroke="url(#divGrad)" stroke-width="1.2" filter="url(#divGlow)" />
+
+  <!-- Center Diamond Reticle -->
+  <g transform="translate(600, 12)">
+    <polygon points="0,-6 6,0 0,6 -6,0" fill="#090E17" stroke="#00F2FE" stroke-width="1.2" />
+    <circle cx="0" cy="0" r="2" fill="#FFFFFF" />
+    
+    <!-- Flanking Hash Marks -->
+    <line x1="-28" y1="-4" x2="-28" y2="4" stroke="#38BDF8" stroke-width="1" opacity="0.6" />
+    <line x1="-20" y1="-2" x2="-20" y2="2" stroke="#38BDF8" stroke-width="1" opacity="0.4" />
+    <line x1="20" y1="-2" x2="20" y2="2" stroke="#8B5CF6" stroke-width="1" opacity="0.4" />
+    <line x1="28" y1="-4" x2="28" y2="4" stroke="#8B5CF6" stroke-width="1" opacity="0.6" />
+  </g>
+</svg>
