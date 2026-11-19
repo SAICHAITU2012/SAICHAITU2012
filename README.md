@@ -323,7 +323,7 @@ I am **Krishna Chaitanya**, a Computer Science student at **Scaler School of Tec
 
 <div align="center">
   <br/>
-  <a href="https://github.com/SAICHAITU2012/SAICHAITU2012/tree/main/portfolio">
+  <a href="https://saichaitu2012.github.io/SAICHAITU2012/portfolio/">
     <img src="https://img.shields.io/badge/LAUNCH%203D%20PORTFOLIO%20EXPERIENCE-00F2FE?style=for-the-badge&logo=three.js&logoColor=030712&labelColor=030712" alt="3D Portfolio Launch" />
   </a>
   <br/><br/>
