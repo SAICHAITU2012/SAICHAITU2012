@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Krishna Chaitanya — 3D Interactive Portfolio &amp; Systems Lab</title>
-  <meta name="description" content="Interactive 3D Portfolio of Krishna Chaitanya — Embodied AI, Reinforcement Learning, Sovereign AI Workbenches, and Spatial Computing.">
+  <title>Krishna Chaitanya — Embodied AI & Systems Engineer</title>
+  <meta name="description" content="Portfolio of Krishna Chaitanya — Embodied AI, heterogeneous swarm robotics, air-gapped sovereign LLM workbenches, and spatial computing.">
+  <meta property="og:title" content="Krishna Chaitanya — Embodied AI & Systems Engineer">
+  <meta property="og:description" content="Swarm robotics, humanoid imitation learning, sovereign air-gapped AI workbenches, and spatial 3D computing.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛰️</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- Import Three.js via ES Modules -->
   <script type="importmap">
     {
       "imports": {
@@ -20,231 +23,238 @@
   </script>
 </head>
 <body>
-  <!-- 3D Three.js WebGL Canvas -->
-  <canvas id="webgl-canvas"></canvas>
+  <canvas id="webgl-canvas" aria-hidden="true"></canvas>
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="noise" aria-hidden="true"></div>
 
-  <!-- Ambient Cyber Scanline Overlay -->
-  <div class="scanlines"></div>
-
-  <!-- HUD Header Overlay -->
-  <header class="hud-header">
-    <div class="hud-left">
-      <div class="hud-status-chip">
-        <span class="status-dot"></span>
-        <span class="status-text">SYSTEM ONLINE · 60 FPS</span>
-      </div>
-      <div class="hud-telemetry">
-        <span class="telemetry-label">// COORD:</span>
-        <span class="telemetry-val">12.97°N, 77.59°E (BLR)</span>
-        <span class="telemetry-sep">|</span>
-        <span class="telemetry-label">ACAD:</span>
-        <span class="telemetry-val">SCALER &amp; BITS PILANI</span>
-      </div>
+  <!-- ============ NAV ============ -->
+  <nav class="nav" id="nav">
+    <a class="nav-logo" href="#top">
+      <span class="nav-logo-mark">KC</span>
+      <span class="nav-logo-text">KRISHNA<span class="dim">.DEV</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#stack">Stack</a>
+      <a href="#contact">Contact</a>
     </div>
-    <div class="hud-right">
-      <a href="https://github.com/SAICHAITU2012" target="_blank" rel="noopener" class="hud-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-        </svg>
-        GitHub Profile
+    <div class="nav-actions">
+      <a href="https://github.com/SAICHAITU2012" target="_blank" rel="noopener" class="btn btn-ghost" aria-label="GitHub profile">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
       </a>
-      <a href="mailto:krishnachaitanya413710@gmail.com" class="hud-btn hud-btn-accent">Contact</a>
+      <a href="mailto:krishnachaitanya413710@gmail.com" class="btn btn-accent">Contact</a>
     </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="hero-tag reveal">
+        <span class="live-dot"></span> SYSTEMS ONLINE · BANGALORE, INDIA · 12.97°N 77.59°E
+      </div>
+      <h1 class="hero-title reveal">
+        <span class="line">KRISHNA</span>
+        <span class="line gradient-text">CHAITANYA</span>
+      </h1>
+      <p class="hero-desc reveal">
+        I build <strong>embodied AI</strong> — heterogeneous robot swarms, humanoid imitation
+        learning — and <strong>air-gapped sovereign LLM workbenches</strong> that never leak a byte.
+        Student at <strong>Scaler × BITS Pilani</strong>.
+      </p>
+      <div class="hero-cta reveal">
+        <a href="#work" class="btn btn-accent btn-lg">Explore the work ↓</a>
+        <a href="https://github.com/SAICHAITU2012" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">GitHub ↗</a>
+      </div>
+      <div class="hero-stats reveal">
+        <div class="stat"><span class="stat-num" data-count="6">0</span><span class="stat-label">Shipped projects</span></div>
+        <div class="stat"><span class="stat-num">0.547<em>m</em></span><span class="stat-label">Swarm drop accuracy</span></div>
+        <div class="stat"><span class="stat-num">0.00<em>KB</em></span><span class="stat-label">Data leaked (air-gap)</span></div>
+        <div class="stat"><span class="stat-num">60<em>fps</em></span><span class="stat-label">Mobile WebGL</span></div>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"><span></span></div>
   </header>
 
-  <!-- Main Hero Viewport -->
-  <main class="hud-content">
-    <div class="hero-center">
-      <div class="hero-tag">ENGINEERING &amp; EMBODIED RESEARCH ARCHITECTURE</div>
-      <h1 class="hero-title">
-        KRISHNA <span class="gradient-text">CHAITANYA</span>
-      </h1>
-      <p class="hero-desc">
-        Specializing in <strong>Embodied AI</strong>, <strong>heterogeneous swarm robotics</strong>, 
-        and <strong>air-gapped sovereign LLM workbenches</strong>.
-      </p>
-
-      <div class="control-hint">
-        <span class="hint-icon">✦</span> Drag to rotate 3D core · Scroll to zoom · Hover nodes to inspect
+  <main>
+    <!-- ============ WORK ============ -->
+    <section class="section" id="work">
+      <div class="section-head reveal">
+        <span class="section-kicker">// 01 — SELECTED WORK</span>
+        <h2 class="section-title">Things I've <span class="gradient-text">built & measured</span></h2>
+        <p class="section-sub">Every metric below comes from a real run, not a slide deck.</p>
       </div>
 
-      <!-- Domain Navigation Filter Pills -->
-      <div class="category-filters">
-        <button class="filter-pill active" data-filter="all">ALL PROTOCOLS</button>
-        <button class="filter-pill" data-filter="robotics">EMBODIED AI &amp; SIM</button>
-        <button class="filter-pill" data-filter="airgap">SOVEREIGN WORKBENCH</button>
-        <button class="filter-pill" data-filter="spatial">3D CELESTIAL &amp; CORE</button>
+      <div class="filters reveal" role="tablist" aria-label="Project filters">
+        <button class="pill active" data-filter="all" role="tab" aria-selected="true">All protocols</button>
+        <button class="pill" data-filter="robotics" role="tab" aria-selected="false">Embodied AI & Sim</button>
+        <button class="pill" data-filter="airgap" role="tab" aria-selected="false">Sovereign Workbench</button>
+        <button class="pill" data-filter="spatial" role="tab" aria-selected="false">3D & Systems Core</button>
       </div>
-    </div>
 
-    <!-- Floating Interactive Project Grid -->
-    <section class="project-matrix-container">
-      <div class="project-matrix" id="projects-grid">
-        <!-- Project 1 -->
-        <article class="project-card" data-category="robotics" data-id="multibot">
-          <div class="card-glow"></div>
-          <div class="card-header">
-            <span class="card-domain-tag">01 // EMBODIED AI</span>
-            <span class="card-status-badge">GENESIS WORLD v1.4.5</span>
+      <div class="grid" id="projects-grid">
+        <article class="card reveal" data-category="robotics" data-id="multibot" style="--d:0">
+          <div class="card-top">
+            <span class="card-num">01</span>
+            <span class="card-badge">GENESIS v1.4.5</span>
           </div>
           <h3 class="card-title">MultiBot-PPO Swarm</h3>
-          <p class="card-summary">
-            Heterogeneous robot team pushing 7 kg crates into a delivery zone, orchestrated by a local LLM commander and learned PPO skills.
-          </p>
-          <div class="card-metric">
-            <span class="metric-num">0.547m</span>
-            <span class="metric-label">Zone Accuracy (4/4 Runs Verified)</span>
-          </div>
-          <div class="card-footer">
-            <span class="tech-pill">Genesis</span>
-            <span class="tech-pill">PPO</span>
-            <span class="tech-pill">PyTorch</span>
-            <span class="tech-pill">Qwen 2.5</span>
-            <button class="inspect-btn" onclick="openModal('multibot')">Details →</button>
+          <p class="card-sum">Heterogeneous robot team pushing 7 kg crates into a delivery zone — a local LLM commander over learned PPO skills.</p>
+          <div class="card-metric"><b>0.547m</b><span>zone accuracy · 4/4 verified runs</span></div>
+          <div class="card-foot">
+            <div class="pills"><span>Genesis</span><span>PPO</span><span>PyTorch</span><span>Qwen 2.5</span></div>
+            <button class="more" data-open="multibot">Inspect →</button>
           </div>
         </article>
 
-        <!-- Project 2 -->
-        <article class="project-card" data-category="robotics" data-id="humanoid">
-          <div class="card-glow"></div>
-          <div class="card-header">
-            <span class="card-domain-tag">02 // HUMANOID ROBOTICS</span>
-            <span class="card-status-badge">MUJOCO 3.17</span>
+        <article class="card reveal" data-category="robotics" data-id="humanoid" style="--d:1">
+          <div class="card-top">
+            <span class="card-num">02</span>
+            <span class="card-badge">MUJOCO 3.17</span>
           </div>
           <h3 class="card-title">Humanoid-LfD (Unitree G1)</h3>
-          <p class="card-summary">
-            Teaching a 23-DoF Unitree G1 humanoid robot manipulation and bipedal behaviors using Learning from Demonstration (Awign × Armature AI).
-          </p>
-          <div class="card-metric">
-            <span class="metric-num">23 DoF</span>
-            <span class="metric-label">Trajectory Replay &amp; Kinematics</span>
-          </div>
-          <div class="card-footer">
-            <span class="tech-pill">MuJoCo 3.17</span>
-            <span class="tech-pill">PyTorch</span>
-            <span class="tech-pill">Unitree G1</span>
-            <button class="inspect-btn" onclick="openModal('humanoid')">Details →</button>
+          <p class="card-sum">Teaching a 23-DoF Unitree G1 manipulation and bipedal behavior via Learning from Demonstration.</p>
+          <div class="card-metric"><b>23 DoF</b><span>trajectory replay & kinematics</span></div>
+          <div class="card-foot">
+            <div class="pills"><span>MuJoCo</span><span>PyTorch</span><span>Unitree G1</span></div>
+            <button class="more" data-open="humanoid">Inspect →</button>
           </div>
         </article>
 
-        <!-- Project 3 -->
-        <article class="project-card" data-category="airgap" data-id="sovereign">
-          <div class="card-glow"></div>
-          <div class="card-header">
-            <span class="card-domain-tag">03 // CONFIDENTIAL AI</span>
-            <span class="card-status-badge">AIR-GAPPED SIH26117</span>
+        <article class="card reveal" data-category="airgap" data-id="sovereign" style="--d:2">
+          <div class="card-top">
+            <span class="card-num">03</span>
+            <span class="card-badge">AIR-GAPPED · SIH26117</span>
           </div>
           <h3 class="card-title">Sovereign AI Workbench</h3>
-          <p class="card-summary">
-            Air-gapped on-premise agentic AI workbench using open-weight multimodal LLMs for confidential industrial workflows (MRPL specs).
-          </p>
-          <div class="card-metric">
-            <span class="metric-num">0.00 KB</span>
-            <span class="metric-label">Outbound Leakage (Audited Sockets)</span>
-          </div>
-          <div class="card-footer">
-            <span class="tech-pill">Ollama</span>
-            <span class="tech-pill">FastAPI</span>
-            <span class="tech-pill">Local RAG</span>
-            <span class="tech-pill">Docker</span>
-            <button class="inspect-btn" onclick="openModal('sovereign')">Details →</button>
+          <p class="card-sum">On-prem agentic AI workbench on open-weight multimodal LLMs for confidential industrial workflows (MRPL).</p>
+          <div class="card-metric"><b>0.00 KB</b><span>outbound leakage · audited sockets</span></div>
+          <div class="card-foot">
+            <div class="pills"><span>Ollama</span><span>FastAPI</span><span>Local RAG</span><span>Docker</span></div>
+            <button class="more" data-open="sovereign">Inspect →</button>
           </div>
         </article>
 
-        <!-- Project 4 -->
-        <article class="project-card" data-category="spatial" data-id="spaceverse">
-          <div class="card-glow"></div>
-          <div class="card-header">
-            <span class="card-domain-tag">04 // SPATIAL 3D COMPUTING</span>
-            <span class="card-status-badge">THREE.JS / EXPO</span>
+        <article class="card reveal" data-category="spatial" data-id="spaceverse" style="--d:3">
+          <div class="card-top">
+            <span class="card-num">04</span>
+            <span class="card-badge">THREE.JS / EXPO</span>
           </div>
           <h3 class="card-title">SpaceVerse Celestial Sim</h3>
-          <p class="card-summary">
-            Phone-first interactive 3D astronomy prototype with real-time planetary gravitational simulation, mass/radius parameters, and shader orbits.
-          </p>
-          <div class="card-metric">
-            <span class="metric-num">60 FPS</span>
-            <span class="metric-label">Mobile WebGL Performance</span>
-          </div>
-          <div class="card-footer">
-            <span class="tech-pill">Three.js</span>
-            <span class="tech-pill">React Native</span>
-            <span class="tech-pill">Expo</span>
-            <span class="tech-pill">R3F</span>
-            <button class="inspect-btn" onclick="openModal('spaceverse')">Details →</button>
+          <p class="card-sum">Phone-first 3D astronomy prototype: real-time gravitational simulation, mass/radius params, shader orbits.</p>
+          <div class="card-metric"><b>60 FPS</b><span>mobile WebGL performance</span></div>
+          <div class="card-foot">
+            <div class="pills"><span>Three.js</span><span>React Native</span><span>Expo</span><span>R3F</span></div>
+            <button class="more" data-open="spaceverse">Inspect →</button>
           </div>
         </article>
 
-        <!-- Project 5 -->
-        <article class="project-card" data-category="airgap" data-id="decisionlens">
-          <div class="card-glow"></div>
-          <div class="card-header">
-            <span class="card-domain-tag">05 // ARCHITECTURAL MEMORY</span>
-            <span class="card-status-badge">SUPERMEMORY LOCAL</span>
+        <article class="card reveal" data-category="airgap" data-id="decisionlens" style="--d:4">
+          <div class="card-top">
+            <span class="card-num">05</span>
+            <span class="card-badge">SUPERMEMORY LOCAL</span>
           </div>
           <h3 class="card-title">DecisionLens</h3>
-          <p class="card-summary">
-            Continuous organizational memory platform transforming engineering discussions into searchable architectural knowledge graphs.
-          </p>
-          <div class="card-metric">
-            <span class="metric-num">100% Local</span>
-            <span class="metric-label">Zero Cloud Vector Indexing</span>
-          </div>
-          <div class="card-footer">
-            <span class="tech-pill">TypeScript</span>
-            <span class="tech-pill">React</span>
-            <span class="tech-pill">FastAPI</span>
-            <span class="tech-pill">Supermemory</span>
-            <button class="inspect-btn" onclick="openModal('decisionlens')">Details →</button>
+          <p class="card-sum">Continuous organizational memory: engineering discussions become a searchable architectural knowledge graph.</p>
+          <div class="card-metric"><b>100% local</b><span>zero-cloud vector indexing</span></div>
+          <div class="card-foot">
+            <div class="pills"><span>TypeScript</span><span>React</span><span>FastAPI</span><span>Supermemory</span></div>
+            <button class="more" data-open="decisionlens">Inspect →</button>
           </div>
         </article>
 
-        <!-- Project 6 -->
-        <article class="project-card" data-category="spatial" data-id="shell">
-          <div class="card-glow"></div>
-          <div class="card-header">
-            <span class="card-domain-tag">06 // SYSTEMS CORE</span>
-            <span class="card-status-badge">POSIX C++</span>
+        <article class="card reveal" data-category="spatial" data-id="shell" style="--d:5">
+          <div class="card-top">
+            <span class="card-num">06</span>
+            <span class="card-badge">POSIX · C++17</span>
           </div>
           <h3 class="card-title">POSIX Shell Architecture</h3>
-          <p class="card-summary">
-            POSIX-compliant shell built from scratch in C++: AST command parsing, pipelines, I/O redirection, fork/exec, and path resolution.
-          </p>
-          <div class="card-metric">
-            <span class="metric-num">POSIX</span>
-            <span class="metric-label">Standards Conformance Tested</span>
-          </div>
-          <div class="card-footer">
-            <span class="tech-pill">C++17</span>
-            <span class="tech-pill">POSIX API</span>
-            <span class="tech-pill">Linux Syscalls</span>
-            <button class="inspect-btn" onclick="openModal('shell')">Details →</button>
+          <p class="card-sum">POSIX-compliant shell from scratch: AST parsing, pipelines, I/O redirection, fork/exec, path resolution.</p>
+          <div class="card-metric"><b>POSIX</b><span>conformance-suite tested</span></div>
+          <div class="card-foot">
+            <div class="pills"><span>C++17</span><span>POSIX API</span><span>Linux syscalls</span></div>
+            <button class="more" data-open="shell">Inspect →</button>
           </div>
         </article>
       </div>
     </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="section" id="about">
+      <div class="section-head reveal">
+        <span class="section-kicker">// 02 — ABOUT</span>
+        <h2 class="section-title">Engineering that <span class="gradient-text">touches physics</span></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>I'm a systems builder at <strong>Scaler × BITS Pilani</strong> working across the full
+          autonomy stack: physics simulation, reinforcement learning, local LLM orchestration and the
+          low-level systems code underneath it all.</p>
+          <p>My bias is <strong>measured truth</strong> — drop accuracy logged from deterministic runs,
+          leakage audited at the socket layer, conformance suites passing. If a number can't be
+          reproduced, it doesn't go on this page.</p>
+          <p>Everything I ship runs on <strong>Apple-silicon local compute with zero paid cloud APIs</strong> —
+          the same constraint regime as the air-gapped systems I build for industry.</p>
+        </div>
+        <div class="about-facts reveal">
+          <div class="fact"><span class="fact-k">FOCUS</span><span class="fact-v">Embodied AI · Swarm RL · Sovereign LLM infra</span></div>
+          <div class="fact"><span class="fact-k">ACADEMICS</span><span class="fact-v">Scaler (Byju's) & B.E. BITS Pilani</span></div>
+          <div class="fact"><span class="fact-k">BASE</span><span class="fact-v">Bangalore, India · IST (UTC+5:30)</span></div>
+          <div class="fact"><span class="fact-k">HARDWARE</span><span class="fact-v">Apple M4 · local-first, air-gap friendly</span></div>
+          <div class="fact"><span class="fact-k">OPEN SOURCE</span><span class="fact-v">All project repos public on GitHub</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STACK ============ -->
+    <section class="section" id="stack">
+      <div class="section-head reveal">
+        <span class="section-kicker">// 03 — STACK</span>
+        <h2 class="section-title">Tools I <span class="gradient-text">think in</span></h2>
+      </div>
+      <div class="stack-cols reveal">
+        <div class="stack-col">
+          <h3>AI & Robotics</h3>
+          <div class="pills lg"><span>PyTorch</span><span>PPO / RL</span><span>Genesis World</span><span>MuJoCo</span><span>Imitation Learning</span><span>Ollama · Qwen</span><span>Local RAG</span></div>
+        </div>
+        <div class="stack-col">
+          <h3>Engineering</h3>
+          <div class="pills lg"><span>Python 3.12</span><span>C++17</span><span>TypeScript</span><span>FastAPI</span><span>Docker</span><span>POSIX syscalls</span></div>
+        </div>
+        <div class="stack-col">
+          <h3>Spatial & Web</h3>
+          <div class="pills lg"><span>Three.js</span><span>WebGL / GLSL</span><span>React Native</span><span>Expo</span><span>React Three Fiber</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="section contact" id="contact">
+      <div class="section-head reveal">
+        <span class="section-kicker">// 04 — CONTACT</span>
+        <h2 class="section-title">Let's build something <span class="gradient-text">real</span></h2>
+        <p class="section-sub">Open to collaborations on robotics, RL and sovereign AI infrastructure.</p>
+      </div>
+      <div class="contact-row reveal">
+        <a href="mailto:krishnachaitanya413710@gmail.com" class="btn btn-accent btn-lg">krishnachaitanya413710@gmail.com</a>
+        <a href="https://github.com/SAICHAITU2012" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">github.com/SAICHAITU2012 ↗</a>
+      </div>
+    </section>
   </main>
 
-  <!-- Interactive Project Details Drawer / Modal -->
-  <div class="modal-backdrop" id="project-modal" onclick="closeModal(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeModal(event)">✕</button>
-      <div id="modal-content">
-        <!-- Injected via JavaScript -->
-      </div>
+  <footer class="footer">
+    <span>KRISHNA CHAITANYA · SCALER × BITS PILANI · BANGALORE</span>
+    <span class="ok">● SIMULATION: READY</span>
+  </footer>
+
+  <!-- ============ MODAL ============ -->
+  <div class="modal-backdrop" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="modal-close" aria-label="Close details">✕</button>
+      <div id="modal-content"></div>
     </div>
   </div>
-
-  <footer class="hud-footer">
-    <div class="footer-left">
-      <span>KRISHNA CHAITANYA · SCALER &amp; BITS PILANI</span>
-      <span class="footer-dot">•</span>
-      <span>BANGALORE, INDIA</span>
-    </div>
-    <div class="footer-right">
-      <span class="matrix-status">SIMULATION: READY</span>
-    </div>
-  </footer>
 
   <script type="module" src="app.js"></script>
 </body>

@@ -1,212 +1,176 @@
 import * as THREE from 'three';
 
-// -------------------------------------------------------------
-// 01. THREE.JS 3D SCENE & ENGINE INITIALIZATION
-// -------------------------------------------------------------
+// ============================================================
+// 01. SCENE — adaptive quality, pauses when tab hidden
+// ============================================================
 const canvas = document.getElementById('webgl-canvas');
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x030712, 0.0018);
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(0, 0, 75);
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x030712, 0.0021);
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+camera.position.set(0, 0, 78);
 
 const renderer = new THREE.WebGLRenderer({
-  canvas,
-  antialias: true,
-  alpha: true,
-  powerPreference: 'high-performance'
+  canvas, antialias: !isMobile, alpha: true, powerPreference: 'high-performance'
 });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 2));
 
-// -------------------------------------------------------------
-// 02. 3D CYBERNETIC MESHES & NEURAL CONSTELLATION
-// -------------------------------------------------------------
+// ============================================================
+// 02. CORE MESH — nested wireframe solids + glowing nucleus
+// ============================================================
 const coreGroup = new THREE.Group();
 scene.add(coreGroup);
 
-// Core 1: Wireframe Icosahedron
-const icoGeometry = new THREE.IcosahedronGeometry(22, 1);
-const icoMaterial = new THREE.MeshBasicMaterial({
-  color: 0x00F2FE,
-  wireframe: true,
-  transparent: true,
-  opacity: 0.35
-});
-const icoMesh = new THREE.Mesh(icoGeometry, icoMaterial);
+const icoMesh = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(22, 1),
+  new THREE.MeshBasicMaterial({ color: 0x00F2FE, wireframe: true, transparent: true, opacity: 0.32 })
+);
 coreGroup.add(icoMesh);
 
-// Core 2: Inner Octahedron
-const octGeometry = new THREE.OctahedronGeometry(13, 0);
-const octMaterial = new THREE.MeshBasicMaterial({
-  color: 0x8B5CF6,
-  wireframe: true,
-  transparent: true,
-  opacity: 0.6
-});
-const octMesh = new THREE.Mesh(octGeometry, octMaterial);
+const octMesh = new THREE.Mesh(
+  new THREE.OctahedronGeometry(13, 0),
+  new THREE.MeshBasicMaterial({ color: 0x8B5CF6, wireframe: true, transparent: true, opacity: 0.55 })
+);
 coreGroup.add(octMesh);
 
-// Core 3: Nucleus Point Cloud
-const nucGeo = new THREE.SphereGeometry(6, 16, 16);
-const nucMat = new THREE.PointsMaterial({
-  color: 0xFFFFFF,
-  size: 0.45,
-  transparent: true,
-  opacity: 0.8
-});
-const nucPoints = new THREE.Points(nucGeo, nucMat);
+const nucPoints = new THREE.Points(
+  new THREE.SphereGeometry(6, 18, 18),
+  new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.45, transparent: true, opacity: 0.85 })
+);
 coreGroup.add(nucPoints);
 
-// Orbiting Rings
-function createOrbitRing(radius, tiltX, tiltZ, color, speed) {
-  const ringGeo = new THREE.RingGeometry(radius, radius + 0.25, 64);
-  const ringMat = new THREE.MeshBasicMaterial({
-    color,
-    side: THREE.DoubleSide,
-    transparent: true,
-    opacity: 0.4
-  });
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = tiltX;
-  ring.rotation.z = tiltZ;
-  scene.add(ring);
-  return { mesh: ring, speed };
-}
-
+// Orbit rings
 const rings = [
-  createOrbitRing(32, Math.PI / 3, 0.4, 0x00F2FE, 0.002),
-  createOrbitRing(38, -Math.PI / 4, -0.6, 0x8B5CF6, -0.0015),
-  createOrbitRing(45, Math.PI / 6, 1.2, 0x38BDF8, 0.001)
-];
+  { radius: 32, tiltX: Math.PI / 3, tiltZ: 0.4, color: 0x00F2FE, speed: 0.0022 },
+  { radius: 38, tiltX: -Math.PI / 4, tiltZ: -0.6, color: 0x8B5CF6, speed: -0.0016 },
+  { radius: 45, tiltX: Math.PI / 6, tiltZ: 1.2, color: 0x38BDF8, speed: 0.0011 }
+].map(cfg => {
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(cfg.radius, cfg.radius + 0.25, 72),
+    new THREE.MeshBasicMaterial({ color: cfg.color, side: THREE.DoubleSide, transparent: true, opacity: 0.35 })
+  );
+  ring.rotation.x = cfg.tiltX;
+  ring.rotation.z = cfg.tiltZ;
+  scene.add(ring);
+  return { mesh: ring, speed: cfg.speed };
+});
 
-// 3D Starfield / Particle Constellation
-const particleCount = 1400;
-const particleGeometry = new THREE.BufferGeometry();
-const particlePositions = new Float32Array(particleCount * 3);
-
-for (let i = 0; i < particleCount * 3; i += 3) {
-  particlePositions[i] = (Math.random() - 0.5) * 360;
-  particlePositions[i + 1] = (Math.random() - 0.5) * 360;
-  particlePositions[i + 2] = (Math.random() - 0.5) * 280;
+// ============================================================
+// 03. STARFIELD + CONSTELLATION LINKS (new in v2)
+// ============================================================
+const particleCount = isMobile ? 700 : 1500;
+const positions = new Float32Array(particleCount * 3);
+for (let i = 0; i < positions.length; i += 3) {
+  positions[i] = (Math.random() - 0.5) * 360;
+  positions[i + 1] = (Math.random() - 0.5) * 360;
+  positions[i + 2] = (Math.random() - 0.5) * 280;
 }
+const starGeo = new THREE.BufferGeometry();
+starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+  color: 0x38BDF8, size: 0.75, transparent: true, opacity: 0.45
+}));
+scene.add(stars);
 
-particleGeometry.setAttribute(
-  'position',
-  new THREE.BufferAttribute(particlePositions, 3)
-);
+// Faint lines connecting nearby stars — constellation feel
+const linkCount = isMobile ? 120 : 260;
+const linkPositions = new Float32Array(linkCount * 6);
+for (let i = 0; i < linkCount; i++) {
+  const a = Math.floor(Math.random() * particleCount) * 3;
+  const b = Math.floor(Math.random() * particleCount) * 3;
+  linkPositions.set([positions[a], positions[a + 1], positions[a + 2],
+                     positions[b], positions[b + 1], positions[b + 2]], i * 6);
+}
+const linkGeo = new THREE.BufferGeometry();
+linkGeo.setAttribute('position', new THREE.BufferAttribute(linkPositions, 3));
+const links = new THREE.LineSegments(linkGeo, new THREE.LineBasicMaterial({
+  color: 0x38BDF8, transparent: true, opacity: 0.08
+}));
+scene.add(links);
 
-const particleMaterial = new THREE.PointsMaterial({
-  color: 0x38BDF8,
-  size: 0.75,
-  transparent: true,
-  opacity: 0.45
-});
+// ============================================================
+// 04. INTERACTION — parallax + drag orbit (with inertia)
+// ============================================================
+let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+let isDragging = false, prev = { x: 0, y: 0 };
+let velX = 0, velY = 0;
 
-const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-scene.add(particleSystem);
-
-// -------------------------------------------------------------
-// 03. INTERACTIVITY & MOUSE TRACKING
-// -------------------------------------------------------------
-let mouseX = 0;
-let mouseY = 0;
-let targetX = 0;
-let targetY = 0;
-
-window.addEventListener('mousemove', (e) => {
-  mouseX = (e.clientX - window.innerWidth / 2) * 0.0008;
-  mouseY = (e.clientY - window.innerHeight / 2) * 0.0008;
-});
-
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
-
-// Drag Orbit Controls
-let isDragging = false;
-let previousMousePosition = { x: 0, y: 0 };
-
-window.addEventListener('mousedown', (e) => {
-  // Only start drag if not clicking on interactive buttons or cards
-  if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A' && !e.target.closest('.project-card')) {
-    isDragging = true;
-    previousMousePosition = { x: e.clientX, y: e.clientY };
-  }
-});
-
-window.addEventListener('mouseup', () => {
-  isDragging = false;
-});
-
-window.addEventListener('mousemove', (e) => {
+addEventListener('mousemove', e => {
+  mouseX = (e.clientX - innerWidth / 2) * 0.0008;
+  mouseY = (e.clientY - innerHeight / 2) * 0.0008;
   if (isDragging) {
-    const deltaX = e.clientX - previousMousePosition.x;
-    const deltaY = e.clientY - previousMousePosition.y;
-
-    coreGroup.rotation.y += deltaX * 0.005;
-    coreGroup.rotation.x += deltaY * 0.005;
-
-    previousMousePosition = { x: e.clientX, y: e.clientY };
+    velY = (e.clientX - prev.x) * 0.005;
+    velX = (e.clientY - prev.y) * 0.005;
+    coreGroup.rotation.y += velY;
+    coreGroup.rotation.x += velX;
+    prev = { x: e.clientX, y: e.clientY };
   }
 });
+addEventListener('mousedown', e => {
+  if (e.target.closest('button, a, .card, .modal-card')) return;
+  isDragging = true; prev = { x: e.clientX, y: e.clientY };
+});
+addEventListener('mouseup', () => { isDragging = false; });
 
-// -------------------------------------------------------------
-// 04. ANIMATION LOOP
-// -------------------------------------------------------------
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 2));
+});
+
+// ============================================================
+// 05. RENDER LOOP — pauses when tab hidden, honors reduced motion
+// ============================================================
 const clock = new THREE.Clock();
+let running = true;
+document.addEventListener('visibilitychange', () => {
+  running = !document.hidden;
+  if (running) { clock.getDelta(); loop(); }
+});
 
-function animate() {
-  requestAnimationFrame(animate);
+function loop() {
+  if (!running) return;
+  requestAnimationFrame(loop);
+  const t = clock.getElapsedTime();
 
-  const elapsedTime = clock.getElapsedTime();
-
-  // Subtle Mouse Parallax
   targetX += (mouseX - targetX) * 0.05;
   targetY += (mouseY - targetY) * 0.05;
-
   camera.position.x = targetX * 25;
   camera.position.y = -targetY * 25;
   camera.lookAt(0, 0, 0);
 
-  // Core Rotations
   if (!isDragging) {
-    coreGroup.rotation.y += 0.002;
-    coreGroup.rotation.x += 0.001;
+    // inertia decay after drag release
+    velX *= 0.95; velY *= 0.95;
+    coreGroup.rotation.y += 0.002 + velY;
+    coreGroup.rotation.x += 0.001 + velX;
   }
-
-  icoMesh.rotation.y = elapsedTime * 0.12;
-  octMesh.rotation.y = -elapsedTime * 0.18;
-  octMesh.rotation.z = elapsedTime * 0.1;
-
-  // Pulse Inner Core
-  const scale = 1 + Math.sin(elapsedTime * 2) * 0.08;
-  nucPoints.scale.set(scale, scale, scale);
-
-  // Rotate Rings
-  rings.forEach((r) => {
-    r.mesh.rotation.z += r.speed;
-  });
-
-  // Slowly rotate particle field
-  particleSystem.rotation.y = elapsedTime * 0.015;
+  icoMesh.rotation.y = t * 0.12;
+  octMesh.rotation.y = -t * 0.18;
+  octMesh.rotation.z = t * 0.1;
+  const s = 1 + Math.sin(t * 2) * 0.08;
+  nucPoints.scale.set(s, s, s);
+  rings.forEach(r => { r.mesh.rotation.z += r.speed; });
+  stars.rotation.y = t * 0.015;
+  links.rotation.y = t * 0.015;
 
   renderer.render(scene, camera);
 }
 
-animate();
+if (reducedMotion) {
+  renderer.render(scene, camera); // single static frame
+} else {
+  loop();
+}
 
-// -------------------------------------------------------------
-// 05. PROJECT DETAILS DATA & MODAL LOGIC
-// -------------------------------------------------------------
+// ============================================================
+// 06. PROJECT DATA + MODAL (Esc / backdrop / focus return)
+// ============================================================
 const projectDetails = {
   multibot: {
     title: 'MultiBot-PPO (Heterogeneous Swarm Robotics)',
@@ -282,59 +246,93 @@ const projectDetails = {
   }
 };
 
-window.openModal = function (projectId) {
-  const p = projectDetails[projectId];
+const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modal-content');
+let lastFocus = null;
+
+function openModal(id) {
+  const p = projectDetails[id];
   if (!p) return;
-
-  const content = `
-    <span class="card-status-badge" style="margin-bottom: 12px; display: inline-block;">${p.badge}</span>
-    <h2 style="font-size: 22px; color: #FFFFFF; margin-bottom: 12px;">${p.title}</h2>
-    <p style="color: #94A3B8; font-size: 14.5px; line-height: 1.6; margin-bottom: 20px;">${p.summary}</p>
-    
-    <div style="background: rgba(3, 7, 18, 0.7); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-      <h4 style="font-size: 12px; font-family: var(--font-mono); color: #00F2FE; letter-spacing: 1px; margin-bottom: 10px;">// KEY ARCHITECTURAL CONTRIBUTIONS</h4>
-      <ul style="color: #CBD5E1; font-size: 13px; line-height: 1.6; padding-left: 20px;">
-        ${p.highlights.map(h => `<li style="margin-bottom: 8px;">${h}</li>`).join('')}
-      </ul>
+  modalContent.innerHTML = `
+    <span class="m-badge">${p.badge}</span>
+    <h2 class="m-title">${p.title}</h2>
+    <p class="m-sum">${p.summary}</p>
+    <div class="m-box">
+      <h4>// KEY ARCHITECTURAL CONTRIBUTIONS</h4>
+      <ul>${p.highlights.map(h => `<li>${h}</li>`).join('')}</ul>
     </div>
+    <div class="pills" style="margin-bottom:24px">${p.stack.map(s => `<span>${s}</span>`).join('')}</div>
+    <div class="m-foot">
+      <a href="${p.repo}" target="_blank" rel="noopener" class="btn btn-accent btn-lg">View on GitHub →</a>
+    </div>`;
+  lastFocus = document.activeElement;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-close').focus();
+}
 
-    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px;">
-      ${p.stack.map(s => `<span class="tech-pill">${s}</span>`).join('')}
-    </div>
+function closeModal() {
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  if (lastFocus) lastFocus.focus();
+}
 
-    <div style="display: flex; justify-content: flex-end;">
-      <a href="${p.repo}" target="_blank" rel="noopener" class="hud-btn hud-btn-accent" style="padding: 10px 20px; font-size: 13px;">
-        View on GitHub →
-      </a>
-    </div>
-  `;
+document.querySelectorAll('[data-open]').forEach(btn =>
+  btn.addEventListener('click', () => openModal(btn.dataset.open)));
+document.getElementById('modal-close').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
 
-  document.getElementById('modal-content').innerHTML = content;
-  document.getElementById('project-modal').classList.add('open');
-};
-
-window.closeModal = function () {
-  document.getElementById('project-modal').classList.remove('open');
-};
-
-// Filter Buttons Handler
-const filterButtons = document.querySelectorAll('.filter-pill');
-const projectCards = document.querySelectorAll('.project-card');
-
-filterButtons.forEach(btn => {
+// ============================================================
+// 07. FILTERS — animated hide/show
+// ============================================================
+const pills = document.querySelectorAll('.pill');
+const cards = document.querySelectorAll('.card');
+pills.forEach(btn => {
   btn.addEventListener('click', () => {
-    filterButtons.forEach(b => b.classList.remove('active'));
+    pills.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
     btn.classList.add('active');
-
-    const filter = btn.getAttribute('data-filter');
-
-    projectCards.forEach(card => {
-      const category = card.getAttribute('data-category');
-      if (filter === 'all' || category === filter) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
-      }
+    btn.setAttribute('aria-selected', 'true');
+    const filter = btn.dataset.filter;
+    cards.forEach(card => {
+      const show = filter === 'all' || card.dataset.category === filter;
+      card.classList.toggle('hide', !show);
     });
+  });
+});
+
+// ============================================================
+// 08. SCROLL REVEAL + COUNTERS + NAV STATE + CARD GLOW
+// ============================================================
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in');
+    en.target.querySelectorAll('[data-count]').forEach(el => {
+      const end = +el.dataset.count;
+      let n = 0;
+      const step = () => {
+        n += Math.max(1, Math.ceil(end / 30));
+        el.textContent = Math.min(n, end);
+        if (n < end) requestAnimationFrame(step);
+      };
+      step();
+    });
+    io.unobserve(en.target);
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40), { passive: true });
+
+// cursor-tracked glow position on cards
+cards.forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    card.style.setProperty('--my', `${e.clientY - r.top}px`);
   });
 });
