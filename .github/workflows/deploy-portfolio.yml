@@ -6,6 +6,7 @@ on:
     paths:
       - 'portfolio/**'
       - '.github/workflows/deploy-portfolio.yml'
+      - 'README.md'
   workflow_dispatch:
 
 permissions:
@@ -27,15 +28,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages (auto-enables on first run)
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
+      - name: Prepare build directory
+        run: |
+          mkdir -p _site/portfolio
+          cp -r portfolio/* _site/
+          cp -r portfolio/* _site/portfolio/
 
-      - name: Upload portfolio artifact
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: portfolio
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
