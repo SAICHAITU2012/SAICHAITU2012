@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 560" width="1600" height="560" role="img" aria-label="Krishna Chaitanya — embodied AI and systems engineer. Minimal sci-fi editorial hero with a monolith structure">
+  <defs>
+    <linearGradient id="hSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#05070D"/>
+      <stop offset="0.62" stop-color="#080C16"/>
+      <stop offset="1" stop-color="#0C1220"/>
+    </linearGradient>
+    <linearGradient id="hSeam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#67E8F9" stop-opacity="0"/>
+      <stop offset="0.18" stop-color="#67E8F9" stop-opacity="0.9"/>
+      <stop offset="0.85" stop-color="#67E8F9" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#67E8F9" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="hPulse" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#EAFDFF" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="hRule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#67E8F9" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#67E8F9" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="hFog" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3A4A66" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#3A4A66" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#3A4A66" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="hReflect" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#67E8F9" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#67E8F9" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="hGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="560" fill="url(#hSky)"/>
+
+  <!-- sparse stars — measured, not confetti -->
+  <g fill="#C9D4E8">
+    <circle cx="140" cy="70" r="1" opacity="0.4"/><circle cx="330" cy="44" r="0.8" opacity="0.3"/>
+    <circle cx="520" cy="96" r="1.1" opacity="0.45"/><circle cx="690" cy="60" r="0.8" opacity="0.3"/>
+    <circle cx="840" cy="120" r="1" opacity="0.35"/><circle cx="250" cy="170" r="0.8" opacity="0.28"/>
+    <circle cx="460" cy="200" r="1" opacity="0.32"/><circle cx="620" cy="150" r="0.7" opacity="0.25"/>
+    <circle cx="960" cy="90" r="0.9" opacity="0.3"/><circle cx="1050" cy="210" r="0.8" opacity="0.26"/>
+    <circle cx="380" cy="260" r="0.8" opacity="0.24"/><circle cx="740" cy="240" r="0.9" opacity="0.28"/>
+    <circle cx="900" cy="180" r="0.7" opacity="0.22"/><circle cx="130" cy="230" r="0.9" opacity="0.3"/>
+    <circle cx="980" cy="330" r="0.7" opacity="0.2"/><circle cx="1080" cy="60" r="0.8" opacity="0.3"/>
+  </g>
+
+  <!-- distant ridges -->
+  <path d="M0 452 L220 436 L480 450 L760 430 L1020 448 L1290 436 L1600 450 L1600 480 L0 480 Z" fill="#0A0F1C"/>
+  <path d="M0 464 L260 452 L540 464 L860 450 L1140 462 L1420 452 L1600 462 L1600 486 L0 486 Z" fill="#070B14"/>
+
+  <!-- fog band, drifting slowly -->
+  <rect x="-200" y="416" width="2000" height="56" fill="url(#hFog)">
+    <animateTransform attributeName="transform" type="translate" values="0 0;90 0;0 0" dur="70s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ground plane -->
+  <rect y="470" width="1600" height="90" fill="#04060B"/>
+  <line x1="0" y1="470" x2="1600" y2="470" stroke="#67E8F9" stroke-opacity="0.14" stroke-width="1"/>
+
+  <!-- ══ THE MONOLITH ══ -->
+  <g>
+    <!-- top + side faces (depth) -->
+    <polygon points="1150,78 1315,78 1355,96 1190,96" fill="#101828"/>
+    <polygon points="1315,78 1355,96 1355,470 1315,470" fill="#0D1424"/>
+    <rect x="1150" y="78" width="165" height="392" fill="#0B111E"/>
+    <!-- lit edge -->
+    <line x1="1150" y1="78" x2="1150" y2="470" stroke="#67E8F9" stroke-opacity="0.4" stroke-width="1.2"/>
+    <line x1="1150" y1="78" x2="1315" y2="78" stroke="#67E8F9" stroke-opacity="0.16" stroke-width="1"/>
+    <!-- luminous seam -->
+    <rect x="1228" y="100" width="5" height="360" fill="url(#hSeam)"/>
+    <rect x="1227" y="100" width="7" height="64" fill="url(#hPulse)" filter="url(#hGlow)">
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 296;0 296" keyTimes="0;0.82;1" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.08;0.72;0.82" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <!-- etched label -->
+    <text x="1166" y="106" font-family="Menlo, Consolas, monospace" font-size="10" fill="#3A4456" letter-spacing="2">SYS.OBS—01</text>
+    <line x1="1166" y1="114" x2="1216" y2="114" stroke="#2A3344" stroke-width="1"/>
+  </g>
+  <!-- ground reflection of the seam -->
+  <rect x="1224" y="470" width="13" height="84" fill="url(#hReflect)" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.35;0.7" dur="8s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ══ editorial typography ══ -->
+  <g font-family="'Avenir Next','Segoe UI',Helvetica,sans-serif">
+    <text x="120" y="128" font-family="Menlo, Consolas, monospace" font-size="12" fill="#67E8F9" letter-spacing="5">// PERSONAL SYSTEMS INDEX — 001</text>
+    <text x="114" y="248" font-size="84" font-weight="200" fill="#E6EAF2" letter-spacing="18">KRISHNA</text>
+    <text x="114" y="338" font-size="84" font-weight="200" fill="#E6EAF2" letter-spacing="18">CHAITANYA</text>
+    <rect x="122" y="372" width="340" height="2" fill="url(#hRule)"/>
+  </g>
+  <g font-family="Menlo, Consolas, monospace">
+    <text x="122" y="404" font-size="15" fill="#8B96AB">embodied ai · autonomous swarms · sovereign systems · spatial 3d</text>
+    <text x="122" y="432" font-size="12" fill="#566074" letter-spacing="1">35 public repositories — embodied ai to posix systems — measured, not claimed</text>
+  </g>
+</svg>

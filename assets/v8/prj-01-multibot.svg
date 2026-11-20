@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" width="800" height="300" role="img" aria-label="PRJ-01 MultiBot-PPO — swarm robotics in Genesis World">
+  <defs>
+    <linearGradient id="p1bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0A0E18"/><stop offset="1" stop-color="#070A12"/>
+    </linearGradient>
+    <linearGradient id="p1r" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#67E8F9" stop-opacity="0.85"/><stop offset="1" stop-color="#67E8F9" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="300" fill="url(#p1bg)" stroke="#1C2433" stroke-width="1.2"/>
+  <text x="560" y="250" font-family="'Avenir Next','Segoe UI',sans-serif" font-size="180" font-weight="200" fill="#67E8F9" fill-opacity="0.06">01</text>
+
+  <g font-family="Menlo, Consolas, monospace">
+    <text x="36" y="44" font-size="11" fill="#67E8F9" letter-spacing="2">PRJ-01 // GENESIS WORLD · RL SWARM</text>
+    <text x="36" y="86" font-family="'Avenir Next','Segoe UI',sans-serif" font-size="23" font-weight="600" fill="#E6EAF2">MultiBot-PPO — Swarm Delivery</text>
+    <rect x="36" y="100" width="46" height="1.5" fill="url(#p1r)"/>
+  </g>
+
+  <!-- line motif: crane arm placing crate into zone -->
+  <g stroke="#67E8F9" fill="none" stroke-width="1.8" opacity="0.85">
+    <line x1="90" y1="120" x2="90" y2="196"/>
+    <line x1="90" y1="120" x2="150" y2="120"/>
+    <line x1="150" y1="120" x2="150" y2="158"/>
+    <rect x="136" y="158" width="28" height="28"/>
+    <rect x="216" y="170" width="52" height="36" stroke-dasharray="7 5"/>
+    <line x1="170" y1="172" x2="212" y2="172" stroke-dasharray="3 4"/>
+  </g>
+  <circle cx="150" cy="158" r="2.6" fill="#67E8F9"/>
+
+  <g font-family="Menlo, Consolas, monospace">
+    <text x="36" y="252" font-size="12" fill="#C8D0DC">python 3.12 · genesis world v1.4.5 · ppo · pytorch · qwen2.5 commander</text>
+    <text x="36" y="276" font-size="11.5" fill="#67E8F9">measured: 2/2 packages delivered · 0.549 m / 0.547 m drop vs 0.55 m zone</text>
+  </g>
+</svg>
