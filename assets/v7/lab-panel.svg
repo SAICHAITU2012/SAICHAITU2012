@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" width="1600" height="400" role="img" aria-label="Core engineering domains — holographic pillars: embodied AI, autonomous swarms, sovereign systems, spatial 3D">
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#05081C"/>
+      <stop offset="0.62" stop-color="#0D1436"/>
+      <stop offset="1" stop-color="#1C2153"/>
+    </linearGradient>
+    <radialGradient id="mg2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#C9BFFF" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#9D8FFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hs2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67E8F9"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="bus2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#67E8F9" stop-opacity="0.1"/>
+      <stop offset="0.5" stop-color="#67E8F9" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="400" fill="url(#sky2)"/>
+
+  <!-- stars -->
+  <g fill="#EAF2FF" opacity="0.8">
+    <circle cx="120" cy="46" r="1.3"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.4s" repeatCount="indefinite"/></circle>
+    <circle cx="420" cy="30" r="1.1" opacity="0.6"/>
+    <circle cx="760" cy="58" r="1.4"><animate attributeName="opacity" values="1;0.3;1" dur="4.2s" repeatCount="indefinite"/></circle>
+    <circle cx="1090" cy="36" r="1.1" opacity="0.65"/>
+    <circle cx="1380" cy="70" r="1.3" opacity="0.8"/>
+    <circle cx="1530" cy="40" r="1.2"><animate attributeName="opacity" values="0.35;0.9;0.35" dur="3s" repeatCount="indefinite"/></circle>
+    <circle cx="260" cy="90" r="1" opacity="0.5"/>
+    <circle cx="930" cy="92" r="1" opacity="0.5"/>
+  </g>
+  <circle cx="1432" cy="96" r="120" fill="url(#mg2)"/>
+  <circle cx="1432" cy="96" r="52" fill="#F6F3FF"/>
+  <circle cx="1414" cy="80" r="8" fill="#DCD6F7" opacity="0.55"/>
+  <circle cx="1452" cy="112" r="6" fill="#DCD6F7" opacity="0.5"/>
+
+  <!-- drift cloud -->
+  <g fill="#C7D2FE" opacity="0.09">
+    <ellipse cx="500" cy="120" rx="220" ry="20"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;80 0;0 0" dur="80s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- connecting bus -->
+  <line x1="130" y1="252" x2="1470" y2="252" stroke="url(#bus2)" stroke-width="2"/>
+  <circle r="5" fill="#67E8F9">
+    <animateMotion path="M130 252 L1470 252" dur="7s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <circle r="4" fill="#B39DFF">
+    <animateMotion path="M1470 252 L130 252" dur="9s" begin="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="9s" begin="2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- pillar 1 · embodied ai -->
+  <g>
+    <rect x="150" y="120" width="200" height="132" rx="12" fill="#22D3EE" fill-opacity="0.07" stroke="url(#hs2)" stroke-opacity="0.8"/>
+    <rect x="212" y="146" width="76" height="52" rx="12" fill="none" stroke="#67E8F9" stroke-width="3"/>
+    <circle cx="234" cy="170" r="6" fill="#67E8F9"><animate attributeName="opacity" values="1;0.4;1" dur="2.8s" repeatCount="indefinite"/></circle>
+    <circle cx="266" cy="170" r="6" fill="#67E8F9"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.8s" repeatCount="indefinite"/></circle>
+    <line x1="250" y1="146" x2="250" y2="132" stroke="#67E8F9" stroke-width="3"/>
+    <circle cx="250" cy="128" r="4.5" fill="#F9A8D4"><animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite"/></circle>
+    <rect x="228" y="206" width="44" height="10" rx="4" fill="#67E8F9" opacity="0.7"/>
+    <text x="250" y="286" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="17" fill="#C7D2FE" letter-spacing="2">EMBODIED AI</text>
+    <text x="250" y="310" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="13" fill="#7E8CC0">genesis · mujoco · ppo</text>
+  </g>
+
+  <!-- pillar 2 · swarms -->
+  <g>
+    <rect x="500" y="120" width="200" height="132" rx="12" fill="#8B5CF6" fill-opacity="0.08" stroke="url(#hs2)" stroke-opacity="0.8"/>
+    <g stroke="#B39DFF" stroke-width="2.5">
+      <line x1="600" y1="150" x2="562" y2="192"/>
+      <line x1="600" y1="150" x2="638" y2="192"/>
+      <line x1="562" y1="192" x2="638" y2="192"/>
+    </g>
+    <circle cx="600" cy="150" r="9" fill="#B39DFF"/>
+    <circle cx="562" cy="192" r="7" fill="#67E8F9"><animate attributeName="opacity" values="1;0.45;1" dur="2.4s" repeatCount="indefinite"/></circle>
+    <circle cx="638" cy="192" r="7" fill="#F9C4E0"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.4s" repeatCount="indefinite"/></circle>
+    <text x="600" y="286" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="17" fill="#C7D2FE" letter-spacing="2">SWARMS + LLM</text>
+    <text x="600" y="310" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="13" fill="#7E8CC0">qwen 2.5 · ollama · rag</text>
+  </g>
+
+  <!-- pillar 3 · sovereign -->
+  <g>
+    <rect x="850" y="120" width="200" height="132" rx="12" fill="#10B981" fill-opacity="0.06" stroke="url(#hs2)" stroke-opacity="0.8"/>
+    <path d="M950 136 l 34 14 v 26 c 0 22 -16 34 -34 40 c -18 -6 -34 -18 -34 -40 v -26 z" fill="none" stroke="#34D399" stroke-width="3"/>
+    <rect x="941" y="176" width="18" height="14" rx="3" fill="#34D399"/>
+    <path d="M944 176 v -8 a 6 6 0 0 1 12 0 v 8" fill="none" stroke="#34D399" stroke-width="3"/>
+    <text x="950" y="286" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="17" fill="#C7D2FE" letter-spacing="2">SOVEREIGN AI</text>
+    <text x="950" y="310" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="13" fill="#7E8CC0">air-gapped · on-prem</text>
+  </g>
+
+  <!-- pillar 4 · spatial 3d -->
+  <g>
+    <rect x="1200" y="120" width="200" height="132" rx="12" fill="#22D3EE" fill-opacity="0.06" stroke="url(#hs2)" stroke-opacity="0.8"/>
+    <circle cx="1300" cy="176" r="26" fill="#F9A8D4"/>
+    <ellipse cx="1300" cy="176" rx="46" ry="14" fill="none" stroke="#67E8F9" stroke-width="3" transform="rotate(-18 1300 176)"/>
+    <circle cx="1338" cy="158" r="4" fill="#F5B84B"><animate attributeName="opacity" values="1;0.4;1" dur="3.4s" repeatCount="indefinite"/></circle>
+    <text x="1300" y="286" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="17" fill="#C7D2FE" letter-spacing="2">SPATIAL 3D</text>
+    <text x="1300" y="310" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="13" fill="#7E8CC0">three.js · r3f · webgl</text>
+  </g>
+
+  <!-- floor glow -->
+  <rect y="352" width="1600" height="48" fill="#0B1026"/>
+  <rect y="352" width="1600" height="3" fill="#67E8F9" opacity="0.25"/>
+</svg>
