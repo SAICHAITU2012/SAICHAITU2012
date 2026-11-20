@@ -59,7 +59,7 @@ My operating thesis: *real intelligence is forged in physics.* I train policies 
 ## 🧭 Core Engineering Domains
 
 <div align="center">
-  <img src="assets/v7/lab-panel.svg" alt="Four holographic pillars — embodied AI, swarms + LLM, sovereign AI, spatial 3D" width="100%" />
+  <img src="assets/v7/domains-matrix.svg" alt="Core Engineering Domains matrix — four floating 3D cards over a holographic grid: embodied AI, swarms + LLM, sovereign AI, spatial 3D + systems" width="100%" />
 </div>
 
 <br/>

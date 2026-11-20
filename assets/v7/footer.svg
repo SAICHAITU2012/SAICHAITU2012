@@ -64,6 +64,20 @@
   <path d="M0 330 Q 400 292 800 326 T 1600 322 L 1600 440 L 0 440 Z" fill="#121A42"/>
   <path d="M0 372 Q 500 336 1000 368 T 1600 366 L 1600 440 L 0 440 Z" fill="#0A0F2A"/>
 
+  <!-- moon reflection pool + holographic water grid -->
+  <ellipse cx="420" cy="392" rx="120" ry="14" fill="#C9BFFF" opacity="0.1">
+    <animate attributeName="opacity" values="0.1;0.18;0.1" dur="6s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="420" cy="404" rx="80" ry="9" fill="#C9BFFF" opacity="0.08"/>
+  <line x1="0" y1="380" x2="1600" y2="380" stroke="#67E8F9" stroke-opacity="0.14" stroke-width="1"/>
+  <line x1="0" y1="402" x2="1600" y2="402" stroke="#67E8F9" stroke-opacity="0.1" stroke-width="1"/>
+  <g stroke="#67E8F9" stroke-opacity="0.12" stroke-width="1">
+    <line x1="800" y1="380" x2="620" y2="440"/>
+    <line x1="800" y1="380" x2="980" y2="440"/>
+    <line x1="800" y1="380" x2="420" y2="440"/>
+    <line x1="800" y1="380" x2="1180" y2="440"/>
+  </g>
+
   <!-- grand torii, center-right -->
   <g fill="#060A1E">
     <rect x="1010" y="270" width="290" height="16" rx="7"/>
@@ -71,6 +85,10 @@
     <rect x="1050" y="309" width="16" height="131"/>
     <rect x="1224" y="309" width="16" height="131"/>
     <rect x="1040" y="260" width="312" height="12" rx="5"/>
+  </g>
+  <g stroke="#67E8F9" stroke-opacity="0.5" stroke-width="1.4">
+    <line x1="1040" y1="260" x2="1352" y2="260"/>
+    <line x1="1010" y1="270" x2="1300" y2="270"/>
   </g>
   <circle cx="1090" cy="290" r="3.2" fill="#F5B84B" opacity="0.95"/>
   <circle cx="1130" cy="290" r="3.2" fill="#F5B84B" opacity="0.9"/>

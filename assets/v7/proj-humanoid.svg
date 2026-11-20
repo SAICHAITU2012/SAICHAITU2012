@@ -46,8 +46,14 @@
   <text x="400" y="96" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="13" fill="#67E8F9">23-DoF</text>
 
   <!-- platform -->
+  <ellipse cx="400" cy="306" rx="130" ry="18" fill="#67E8F9" opacity="0.1">
+    <animate attributeName="opacity" values="0.1;0.2;0.1" dur="4s" repeatCount="indefinite"/>
+  </ellipse>
   <ellipse cx="400" cy="304" rx="120" ry="16" fill="#0A0F2A"/>
-  <ellipse cx="400" cy="304" rx="120" ry="16" fill="none" stroke="#8B5CF6" stroke-opacity="0.7" stroke-width="2"/>
+  <ellipse cx="400" cy="304" rx="120" ry="16" fill="none" stroke="#8B5CF6" stroke-opacity="0.8" stroke-width="2"/>
+  <ellipse cx="400" cy="304" rx="86" ry="10" fill="none" stroke="#67E8F9" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="6 6">
+    <animate attributeName="stroke-dashoffset" values="0;-24" dur="2.8s" repeatCount="indefinite"/>
+  </ellipse>
 
   <!-- holo IK panel -->
   <g font-family="Menlo, Consolas, monospace" font-size="12.5">
