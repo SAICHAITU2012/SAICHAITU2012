@@ -3,319 +3,350 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S. SadhaSri 🌸 Enchanted Pastel Dreamscape · 3D Portfolio</title>
-  <meta name="description" content="A dreamy, cute, interactive 3D developer portfolio for S. SadhaSri — Full-Stack Web Craft, Machine Learning, and Creative Software Engineering.">
-  <meta name="theme-color" content="#FF85A8">
+  <title>S. SadhaSri // Engineering Portfolio</title>
+  <meta name="description" content="S. SadhaSri — full-stack engineer & ML enthusiast. Fast, expressive web platforms, predictive data pipelines, and automation tooling for AI agents. 100% open source.">
+  <meta name="theme-color" content="#04070d">
+  <meta property="og:title" content="S. SadhaSri // Engineering Portfolio">
+  <meta property="og:description" content="Full-stack engineering, ML pipelines & agent tooling. 13 public repos, 100% open source.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2304070d'/%3E%3Ctext x='10' y='44' font-family='monospace' font-size='30' fill='%2322d3ee'%3E%3E_%3C/text%3E%3Crect x='34' y='36' width='18' height='4' fill='%23818cf8'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="three.min.js"></script>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
-  <!-- 3D WebGL Canvas (z-index: 1) -->
-  <canvas id="webgl-canvas"></canvas>
-
-  <!-- Atmospheric Glow Vignette (z-index: 2) -->
-  <div class="dreamy-overlay"></div>
-
-  <!-- ═══════════════════════════════════════
-       TOP NAVIGATION BAR (z-index: 30)
-       ═══════════════════════════════════════ -->
-  <header class="hud-nav">
-    <div class="hud-brand">
-      <div class="avatar-ring">
-        <span class="avatar-emoji">🌸</span>
-      </div>
-      <div>
-        <h1 class="brand-title">S. SadhaSri</h1>
-        <p class="brand-subtitle">Creative Developer Studio ✨</p>
-      </div>
+  <!-- boot sequence -->
+  <div id="boot-overlay" aria-hidden="true">
+    <div class="boot-inner">
+      <div class="boot-lines"></div>
+      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
     </div>
+  </div>
 
-    <div class="hud-actions">
-      <button id="btn-sound" class="hud-pill hud-pill-sound" onclick="toggleAudio()" title="Toggle sparkle sounds">
-        <span id="sound-icon">🎵</span><span id="sound-label">Sound: ON</span>
-      </button>
-      <button class="hud-pill" onclick="switchSection('hero')">🌸 Home</button>
-      <button class="hud-pill" onclick="switchSection('projects')">🚀 Projects</button>
-      <button class="hud-pill" onclick="switchSection('about')">📖 About</button>
-      <button class="hud-pill" onclick="switchSection('skills')">✨ Skills</button>
-      <button id="btn-toggle-hud" class="hud-pill hud-pill-view" onclick="toggleHUD()" title="Toggle UI to enjoy 3D scene">
-        👁️ Hide HUD
-      </button>
-      <a href="mailto:jnanasadhasri.s@gmail.com" class="hud-pill hud-pill-primary">💌 Say Hello</a>
+  <!-- scroll progress -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ambient background -->
+  <canvas id="bg3d" aria-hidden="true"></canvas>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <a class="skip-link" href="#main">skip to content</a>
+
+  <!-- ══════════ NAV ══════════ -->
+  <header id="site-nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo" aria-label="home">
+        <span class="logo-user">sadhasri</span><span class="logo-at">@dev</span><span class="logo-path">:~$</span><span class="logo-cursor">▌</span>
+      </a>
+      <nav class="nav-links" aria-label="primary">
+        <a href="#about" data-section="about"><span class="nav-num">01.</span>about</a>
+        <a href="#projects" data-section="projects"><span class="nav-num">02.</span>work</a>
+        <a href="#stack" data-section="stack"><span class="nav-num">03.</span>stack</a>
+        <a href="#contact" data-section="contact"><span class="nav-num">04.</span>contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="cmdk-open" class="nav-cmdk" type="button" aria-label="open command palette">
+          <span class="cmdk-key">⌘</span><span class="cmdk-key">K</span>
+        </button>
+        <a class="nav-gh" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github&nbsp;↗</a>
+      </div>
     </div>
   </header>
 
-  <!-- Interactive Hint Ribbon -->
-  <div class="interaction-hint">
-    <span class="sparkle-glyph">✦</span>
-    <span>Drag to orbit the floral island &nbsp;·&nbsp; Click to burst hearts &amp; sparkles &nbsp;·&nbsp; Scroll to zoom</span>
-    <span class="sparkle-glyph">✦</span>
+  <!-- side rails (desktop) -->
+  <div class="side-rail rail-left" aria-hidden="true">
+    <a href="https://github.com/SadhaSri697" target="_blank" rel="noopener" title="github">gh</a>
+    <a href="mailto:jnanasadhasri.s@gmail.com" title="email">@</a>
+    <span class="rail-line"></span>
+  </div>
+  <div class="side-rail rail-right" aria-hidden="true">
+    <a class="rail-email" href="mailto:jnanasadhasri.s@gmail.com">jnanasadhasri.s@gmail.com</a>
+    <span class="rail-line"></span>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       FLOATING HUD CONTENT (z-index: 10)
-       ═══════════════════════════════════════ -->
-  <main class="hud-main">
+  <main id="main">
 
-    <!-- ── SECTION 1: HERO ── -->
-    <section id="sec-hero" class="hud-section active">
-      <div class="hero-bubble">
-        <div class="hero-badge">
-          <span>🎀 WELCOME TO MY DREAMSCAPE</span>
-        </div>
-
-        <h2 class="hero-heading">
-          Crafting Software with <span class="gradient-text">Heart &amp; Code</span> 🌸
-        </h2>
-
-        <p class="hero-text">
-          Hello! I'm <strong>S. SadhaSri</strong>, a full-stack engineer and machine learning enthusiast. I design delightful interactive web platforms, build predictive data models, and bring aesthetic digital worlds to life.
+    <!-- ══════════ HERO ══════════ -->
+    <section id="hero">
+      <div class="hero-inner">
+        <p class="hero-status reveal">
+          <span class="status-dot"></span>
+          <span class="mono">&gt; system online — portfolio v6.5 · three.js cinematic build</span>
         </p>
-
-        <!-- Stat Chips -->
-        <div class="hero-stats-row">
-          <div class="hero-stat-chip">
-            <span class="stat-number">13</span>
-            <span class="stat-label">Repositories</span>
-          </div>
-          <div class="hero-stat-chip">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Open Source</span>
-          </div>
-          <div class="hero-stat-chip">
-            <span class="stat-number">GraphQL</span>
-            <span class="stat-label">&amp; Firebase</span>
-          </div>
-          <div class="hero-stat-chip">
-            <span class="stat-number">Scikit</span>
-            <span class="stat-label">&amp; Pandas</span>
-          </div>
+        <h1 class="hero-name reveal" style="--d:.08s">S.&nbsp;SadhaSri</h1>
+        <p class="hero-typed reveal" style="--d:.16s" aria-label="roles">
+          <span class="typed-glyph mono">$</span>
+          <span id="typed-roles" class="mono">full-stack developer</span><span class="typed-caret mono">_</span>
+        </p>
+        <p class="hero-lede reveal" style="--d:.24s">
+          I build fast, expressive web platforms, predictive ML pipelines, and automation
+          tooling for AI agents — from live AniList GraphQL apps to PM2.5 forecasting across
+          12 sensor stations. Shipping everything open source, from India.
+        </p>
+        <div class="hero-ctas reveal" style="--d:.32s">
+          <a class="btn btn-primary mono" href="#projects">./view --work</a>
+          <a class="btn btn-ghost mono" href="#contact">./contact --init</a>
         </div>
-
-        <div class="hero-buttons-row">
-          <button class="cute-btn cute-btn-primary" onclick="switchSection('projects')">
-            <span>Explore Projects ✨</span>
-          </button>
-          <a href="https://github.com/SadhaSri697" target="_blank" rel="noopener" class="cute-btn cute-btn-secondary">
-            <span>GitHub @SadhaSri697 ↗</span>
-          </a>
-        </div>
+        <ul class="hero-stats reveal mono" style="--d:.4s">
+          <li><span class="stat-n" data-count="13">0</span><span class="stat-l">public repos</span></li>
+          <li><span class="stat-n" data-count="6">0</span><span class="stat-l">featured builds</span></li>
+          <li><span class="stat-n" data-count="100" data-suffix="%">0</span><span class="stat-l">open source</span></li>
+          <li><span class="stat-n" data-count="4">0</span><span class="stat-l">engineering domains</span></li>
+        </ul>
       </div>
+      <a class="scroll-cue mono" href="#about" aria-label="scroll to about">
+        <span>scroll</span><span class="cue-line"></span>
+      </a>
     </section>
 
-    <!-- ── SECTION 2: PROJECTS (REFERENCE 02) ── -->
-    <section id="sec-projects" class="hud-section">
-      <div class="panel-card">
-        <div class="panel-header">
-          <div>
-            <span class="panel-tag">✦ FEATURED WORK</span>
-            <h3 class="panel-title">Selected Projects 🚀</h3>
-          </div>
-          <button class="panel-close" onclick="switchSection('hero')">✕</button>
-        </div>
-
-        <div class="project-grid">
-          <!-- Card 1: My Anime Shelf -->
-          <article class="proj-card" onclick="openModal('animeshelf')">
-            <div class="proj-badge-row">
-              <span class="proj-tag tag-pink">01 // WEB CRAFT</span>
-              <span class="status-live">● Live Demo ↗</span>
-            </div>
-            <h4 class="proj-name">My Anime Shelf ✨</h4>
-            <p class="proj-desc">
-              Anime discovery &amp; list tracking platform built with AniList GraphQL, Firebase authentication, and modern CSS design tokens.
-            </p>
-            <div class="proj-stack">
-              <span>Vanilla JS</span>
-              <span>GraphQL</span>
-              <span>Firebase v11</span>
-            </div>
-          </article>
-
-          <!-- Card 2: Air Quality Predictor -->
-          <article class="proj-card" onclick="openModal('airquality')">
-            <div class="proj-badge-row">
-              <span class="proj-tag tag-purple">02 // ML REGRESSION</span>
-              <span class="status-metric">UCI PRSA</span>
-            </div>
-            <h4 class="proj-name">Air Quality Predictor 🌫️</h4>
-            <p class="proj-desc">
-              Multi-station atmospheric PM2.5 forecasting across 12 Beijing stations using time-series meteorological feature engineering.
-            </p>
-            <div class="proj-stack">
-              <span>Python</span>
-              <span>Scikit-Learn</span>
-              <span>Pandas</span>
-            </div>
-          </article>
-
-          <!-- Card 3: Student Health Analytics -->
-          <article class="proj-card" onclick="openModal('studenteda')">
-            <div class="proj-badge-row">
-              <span class="proj-tag tag-sky">03 // DATA SCIENCE</span>
-              <span class="status-metric">EDA &amp; Stats</span>
-            </div>
-            <h4 class="proj-name">Student Health Analytics 📊</h4>
-            <p class="proj-desc">
-              Exploratory Data Analysis CLI tool investigating demographic, academic, and lifestyle metrics impacting student well-being.
-            </p>
-            <div class="proj-stack">
-              <span>Python</span>
-              <span>EDA</span>
-              <span>CLI</span>
-            </div>
-          </article>
-
-          <!-- Card 4: web2skill -->
-          <article class="proj-card" onclick="openModal('web2skill')">
-            <div class="proj-badge-row">
-              <span class="proj-tag tag-mint">04 // AI TOOLING</span>
-              <span class="status-metric">Agent Skills</span>
-            </div>
-            <h4 class="proj-name">web2skill (w2s) 🪄</h4>
-            <p class="proj-desc">
-              Automated generator converting web application interfaces into structured hierarchical SKILL.md specs for autonomous AI agents.
-            </p>
-            <div class="proj-stack">
-              <span>Python</span>
-              <span>Web Scraping</span>
-              <span>AI Agents</span>
-            </div>
-          </article>
-        </div>
+    <!-- ══════════ ABOUT ══════════ -->
+    <section id="about" class="section">
+      <div class="section-head reveal">
+        <span class="section-num mono">01.</span>
+        <h2 class="section-title">about&nbsp;<span class="title-dim">// operator profile</span></h2>
+        <span class="section-rule"></span>
       </div>
-    </section>
 
-    <!-- ── SECTION 3: ABOUT (REFERENCE 01 & 02) ── -->
-    <section id="sec-about" class="hud-section">
-      <div class="panel-card max-w-2xl">
-        <div class="panel-header">
-          <div>
-            <span class="panel-tag">✦ STORY &amp; PHILOSOPHY</span>
-            <h3 class="panel-title">About SadhaSri 🌸</h3>
-          </div>
-          <button class="panel-close" onclick="switchSection('hero')">✕</button>
-        </div>
-        <div class="about-content">
-          <p>
-            Hello there! I'm <strong>S. SadhaSri</strong>, a developer based in India. I love blending technical rigor with heartfelt creative design. For me, coding isn't just about syntax — it's about making things that feel intuitive, joyful, and memorable.
+      <div class="about-grid">
+        <div class="about-copy">
+          <p class="reveal">
+            I'm <strong>S. SadhaSri</strong> — a software developer and creative engineer based in
+            India, working at the intersection of delightful web interfaces and practical machine
+            learning. I care about software that feels <em>considered</em>: intentional color,
+            accessible typography, micro-interactions that respond like physical objects.
           </p>
-          <div class="about-grid">
-            <div class="about-box">
-              <span class="about-box-icon">🎨</span>
-              <h5>Empathy &amp; Design</h5>
-              <p>Crafting UIs with intentional color harmony, accessible typography, and delightful micro-interactions.</p>
-            </div>
-            <div class="about-box">
-              <span class="about-box-icon">📊</span>
-              <h5>Data &amp; Intelligence</h5>
-              <p>Building predictive pipelines and uncovering real-world statistical insights using Python and ML.</p>
-            </div>
-            <div class="about-box">
-              <span class="about-box-icon">🌸</span>
-              <h5>Creative Curiosity</h5>
-              <p>Constantly exploring new tools: from 3D WebGL scenes to GraphQL APIs and autonomous AI agent skills.</p>
-            </div>
-            <div class="about-box">
-              <span class="about-box-icon">🤝</span>
-              <h5>Open Source Spirit</h5>
-              <p>All projects and experiments are open source, shared to inspire and learn alongside the developer community.</p>
-            </div>
-          </div>
-          <p class="about-quote">
-            "Curiosity is the fuel. Empathy is the design. Code is how ideas come alive."
+          <p class="reveal" style="--d:.06s">
+            On the data side I run end-to-end pipelines — cleansing, feature engineering, modeling,
+            evaluation — on real-world datasets, from multi-station air-quality time series to
+            student-wellness surveys. On the tooling side I automate the developer experience
+            itself: generators that compile web UIs into agent-readable <code>SKILL.md</code> specs,
+            and bridges that pipe Telegram straight into local AI coding sessions.
           </p>
+          <p class="about-creed reveal mono" style="--d:.12s">
+            <span class="creed-mark">//</span> everything I ship is open source — curiosity is the
+            fuel, empathy is the design, code is how ideas come alive.
+          </p>
+
+          <div class="pillar-grid">
+            <div class="pillar-card reveal" style="--d:.05s">
+              <span class="pillar-glyph mono">&lt;/&gt;</span>
+              <h3>web craft</h3>
+              <p>Design-token systems, fluid typography, mobile-first layouts, deployments with zero external bloat.</p>
+            </div>
+            <div class="pillar-card reveal" style="--d:.1s">
+              <span class="pillar-glyph mono">∑</span>
+              <h3>data &amp; ml</h3>
+              <p>Regression pipelines, time-series feature engineering, statistical EDA on real-world datasets.</p>
+            </div>
+            <div class="pillar-card reveal" style="--d:.15s">
+              <span class="pillar-glyph mono">⇄</span>
+              <h3>apis &amp; cloud</h3>
+              <p>GraphQL &amp; REST integration, Firebase v11 real-time stores, FastAPI routes over SQLite.</p>
+            </div>
+            <div class="pillar-card reveal" style="--d:.2s">
+              <span class="pillar-glyph mono">⚙</span>
+              <h3>automation</h3>
+              <p>SKILL.md generators for coding agents, Telegram↔agent bridges, containerized dev environments.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-card reveal" style="--d:.15s">
+          <div class="term-head">
+            <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+            <span class="term-title mono">sadhasri@dev — zsh</span>
+          </div>
+          <pre id="terminal-screen" class="mono" aria-label="terminal introduction"></pre>
         </div>
       </div>
     </section>
 
-    <!-- ── SECTION 4: SKILL GARDEN ── -->
-    <section id="sec-skills" class="hud-section">
-      <div class="panel-card max-w-2xl">
-        <div class="panel-header">
-          <div>
-            <span class="panel-tag">✦ TECHNICAL ARSENAL</span>
-            <h3 class="panel-title">Pastel Skill Garden ✨</h3>
+    <!-- ══════════ PROJECTS ══════════ -->
+    <section id="projects" class="section">
+      <div class="section-head reveal">
+        <span class="section-num mono">02.</span>
+        <h2 class="section-title">selected work&nbsp;<span class="title-dim">// shipped &amp; public</span></h2>
+        <span class="section-rule"></span>
+      </div>
+
+      <div class="project-grid">
+        <article class="project-card reveal">
+          <div class="proj-top mono">
+            <span class="proj-id">#01</span>
+            <span class="proj-cat">web platform</span>
+            <span class="proj-live"><span class="live-dot"></span>live</span>
           </div>
-          <button class="panel-close" onclick="switchSection('hero')">✕</button>
+          <h3 class="proj-title">My Anime Shelf</h3>
+          <p class="proj-desc">Anime discovery, rating &amp; tracking platform — live AniList GraphQL search, Firebase v11 auth, and a hand-rolled design-token system.</p>
+          <ul class="proj-tags mono"><li>vanilla js</li><li>graphql</li><li>firebase v11</li><li>css tokens</li></ul>
+          <div class="proj-links mono">
+            <a href="https://sadhasri697.github.io/My-Anime-Self/" target="_blank" rel="noopener">demo ↗</a>
+            <a href="https://github.com/SadhaSri697/My-Anime-Self" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" style="--d:.06s">
+          <div class="proj-top mono">
+            <span class="proj-id">#02</span>
+            <span class="proj-cat">ml forecasting</span>
+          </div>
+          <h3 class="proj-title">Air Quality Trend Predictor</h3>
+          <p class="proj-desc">Multi-horizon PM2.5 forecasting across 12 Beijing monitoring stations with time-series meteorological feature engineering.</p>
+          <ul class="proj-tags mono"><li>python</li><li>scikit-learn</li><li>pandas</li><li>numpy</li></ul>
+          <div class="proj-links mono">
+            <a href="https://github.com/SadhaSri697/Air-Quality-Trend-Predictor" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" style="--d:.12s">
+          <div class="proj-top mono">
+            <span class="proj-id">#03</span>
+            <span class="proj-cat">data science</span>
+          </div>
+          <h3 class="proj-title">Student Depression Analysis</h3>
+          <p class="proj-desc">Analytical system probing demographic, academic &amp; lifestyle signals behind student well-being, wrapped in an interactive CLI.</p>
+          <ul class="proj-tags mono"><li>python</li><li>eda</li><li>statistics</li><li>cli</li></ul>
+          <div class="proj-links mono">
+            <a href="https://github.com/SadhaSri697/Student-Depression-Analysis" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" style="--d:.18s">
+          <div class="proj-top mono">
+            <span class="proj-id">#04</span>
+            <span class="proj-cat">ai tooling</span>
+          </div>
+          <h3 class="proj-title">web2skill (w2s)</h3>
+          <p class="proj-desc">Compiles web interfaces into hierarchical SKILL.md specs, so coding agents get operational context with zero manual prompt-writing.</p>
+          <ul class="proj-tags mono"><li>python</li><li>scraping</li><li>ai agents</li><li>markdown</li></ul>
+          <div class="proj-links mono">
+            <a href="https://github.com/SadhaSri697/Webtoskill" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" style="--d:.24s">
+          <div class="proj-top mono">
+            <span class="proj-id">#05</span>
+            <span class="proj-cat">automation</span>
+          </div>
+          <h3 class="proj-title">Telegram Bridge for Pi Sessions</h3>
+          <p class="proj-desc">Multi-session Telegram ↔ agent bridge with bidirectional token streaming and isolated concurrent bot processes.</p>
+          <ul class="proj-tags mono"><li>typescript</li><li>bot api</li><li>node.js</li><li>async ipc</li></ul>
+          <div class="proj-links mono">
+            <a href="https://github.com/SadhaSri697/Pi-telegram-main" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card reveal" style="--d:.3s">
+          <div class="proj-top mono">
+            <span class="proj-id">#06</span>
+            <span class="proj-cat">algorithms</span>
+          </div>
+          <h3 class="proj-title">Python Programs Suite</h3>
+          <p class="proj-desc">Curated algorithms &amp; data-structures playground — recursion, string science, sorting paradigms — written in idiomatic Python.</p>
+          <ul class="proj-tags mono"><li>python</li><li>dsa</li><li>clean code</li></ul>
+          <div class="proj-links mono">
+            <a href="https://github.com/SadhaSri697/Python-programs" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </article>
+      </div>
+
+      <p class="archive-note reveal mono">
+        <a href="https://github.com/SadhaSri697?tab=repositories" target="_blank" rel="noopener">view the full archive → github.com/SadhaSri697</a>
+      </p>
+    </section>
+
+    <!-- ══════════ STACK ══════════ -->
+    <section id="stack" class="section">
+      <div class="section-head reveal">
+        <span class="section-num mono">03.</span>
+        <h2 class="section-title">stack&nbsp;<span class="title-dim">// inventory</span></h2>
+        <span class="section-rule"></span>
+      </div>
+
+      <div class="stack-grid">
+        <div class="stack-panel reveal">
+          <h3 class="mono"><span class="stack-num">01</span> languages</h3>
+          <ul class="chips mono">
+            <li>python</li><li>javascript es6+</li><li>typescript</li><li>java</li>
+            <li>c++</li><li>c#</li><li>sql</li><li>html5 / css3</li>
+          </ul>
         </div>
-        <div class="skill-garden-grid">
-          <div class="skill-group">
-            <h5 class="skill-group-title">🌸 Core Languages</h5>
-            <div class="skill-badges">
-              <span class="skill-pill">Python</span>
-              <span class="skill-pill">JavaScript ES6+</span>
-              <span class="skill-pill">TypeScript</span>
-              <span class="skill-pill">Java</span>
-              <span class="skill-pill">C++</span>
-              <span class="skill-pill">HTML5 &amp; CSS3</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h5 class="skill-group-title">🎨 Frontend &amp; Cloud</h5>
-            <div class="skill-badges">
-              <span class="skill-pill">React</span>
-              <span class="skill-pill">AniList GraphQL</span>
-              <span class="skill-pill">Firebase v11</span>
-              <span class="skill-pill">CSS Design Tokens</span>
-              <span class="skill-pill">FastAPI</span>
-              <span class="skill-pill">SQLite</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h5 class="skill-group-title">📊 ML &amp; Data Science</h5>
-            <div class="skill-badges">
-              <span class="skill-pill">Scikit-Learn</span>
-              <span class="skill-pill">Pandas</span>
-              <span class="skill-pill">NumPy</span>
-              <span class="skill-pill">Matplotlib</span>
-              <span class="skill-pill">Seaborn</span>
-              <span class="skill-pill">Jupyter Notebooks</span>
-            </div>
-          </div>
-          <div class="skill-group">
-            <h5 class="skill-group-title">🛠️ Tooling &amp; Systems</h5>
-            <div class="skill-badges">
-              <span class="skill-pill">Git &amp; GitHub</span>
-              <span class="skill-pill">Docker</span>
-              <span class="skill-pill">VS Code</span>
-              <span class="skill-pill">Postman</span>
-              <span class="skill-pill">Linux (Debian)</span>
-            </div>
-          </div>
+        <div class="stack-panel reveal" style="--d:.06s">
+          <h3 class="mono"><span class="stack-num">02</span> frontend &amp; design</h3>
+          <ul class="chips mono">
+            <li>react</li><li>d3.js</li><li>design tokens</li><li>responsive systems</li><li>micro-interactions</li>
+          </ul>
+        </div>
+        <div class="stack-panel reveal" style="--d:.12s">
+          <h3 class="mono"><span class="stack-num">03</span> backend &amp; data</h3>
+          <ul class="chips mono">
+            <li>fastapi</li><li>graphql</li><li>firebase v11</li><li>sqlite</li><li>kafka</li>
+            <li>scikit-learn</li><li>pandas</li><li>numpy</li>
+          </ul>
+        </div>
+        <div class="stack-panel reveal" style="--d:.18s">
+          <h3 class="mono"><span class="stack-num">04</span> infra &amp; tooling</h3>
+          <ul class="chips mono">
+            <li>git &amp; github</li><li>docker</li><li>debian linux</li><li>postman</li><li>jupyter</li>
+          </ul>
+        </div>
+      </div>
+      <p class="exploring reveal mono">
+        <span class="creed-mark">//</span> currently compiling → systems engineering · cloud deployment pipelines · agent architectures
+      </p>
+    </section>
+
+    <!-- ══════════ CONTACT ══════════ -->
+    <section id="contact" class="section">
+      <div class="section-head reveal">
+        <span class="section-num mono">04.</span>
+        <h2 class="section-title">contact&nbsp;<span class="title-dim">// open channel</span></h2>
+        <span class="section-rule"></span>
+      </div>
+
+      <div class="contact-inner">
+        <p class="contact-kicker reveal mono">&gt; transmission channel open — response time: fast</p>
+        <h3 class="contact-heading reveal" style="--d:.08s">Let's build something<br><span class="grad-text">worth shipping.</span></h3>
+        <p class="contact-lede reveal" style="--d:.16s">
+          My inbox is open — collaborations, open source, interesting problems,
+          or just to talk shop about agents and air-quality sensors.
+        </p>
+        <div class="hero-ctas contact-ctas reveal" style="--d:.24s">
+          <a class="btn btn-primary mono" href="mailto:jnanasadhasri.s@gmail.com?subject=Hello%20SadhaSri%20—%20from%20your%20portfolio">say hello ↗</a>
+          <a class="btn btn-ghost mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github.com/SadhaSri697 ↗</a>
         </div>
       </div>
     </section>
 
+    <!-- ══════════ FOOTER ══════════ -->
+    <footer id="site-footer">
+      <div class="footer-inner mono">
+        <p>© <span id="year">2026</span> S. SadhaSri — designed &amp; built from scratch</p>
+        <p class="footer-mid">vanilla html · css · js — zero frameworks, zero build step</p>
+        <p>v6.5.0 · press <span class="cmdk-key">⌘</span><span class="cmdk-key">K</span> anywhere</p>
+      </div>
+    </footer>
   </main>
 
-  <!-- ═══════════════════════════════════════
-       PROJECT DETAIL MODAL
-       ═══════════════════════════════════════ -->
-  <div id="project-modal" class="modal-backdrop" onclick="closeModal(event)">
-    <div class="modal-window" onclick="event.stopPropagation()">
-      <button class="modal-close-btn" onclick="closeModal(event)">✕</button>
-      <div id="modal-body"></div>
+  <!-- ══════════ COMMAND PALETTE ══════════ -->
+  <div id="cmdk" class="cmdk-overlay" hidden>
+    <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="command palette">
+      <div class="cmdk-input-row">
+        <span class="mono cmdk-prompt">&gt;</span>
+        <input id="cmdk-input" class="mono" type="text" placeholder="type a command…" autocomplete="off" spellcheck="false">
+        <span class="mono cmdk-esc">esc</span>
+      </div>
+      <ul id="cmdk-list" class="mono"></ul>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       HUD FOOTER (z-index: 25)
-       ═══════════════════════════════════════ -->
-  <footer class="hud-footer">
-    <div class="footer-left">
-      <span class="pulse-sparkle">🌸</span>
-      <span>Enchanted Pastel Dreamscape · v5.3 Deluxe · Three.js WebGL 3D</span>
-    </div>
-    <div class="footer-right">
-      <span>Designed with ♡ for S. SadhaSri · 2026</span>
-    </div>
-  </footer>
-
   <script src="app.js"></script>
+  <script src="three.min.js"></script>
+  <script src="scene3d.js"></script>
 </body>
 </html>
