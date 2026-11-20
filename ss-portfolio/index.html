@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SadhaSri 🌸 Enchanted Pastel Dreamscape · 3D Portfolio</title>
+  <title>S. SadhaSri 🌸 Enchanted Pastel Dreamscape · 3D Portfolio</title>
   <meta name="description" content="A dreamy, cute, interactive 3D developer portfolio for S. SadhaSri — Full-Stack Web Craft, Machine Learning, and Creative Software Engineering.">
-  <meta name="theme-color" content="#0D0719">
+  <meta name="theme-color" content="#FF85A8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -17,11 +17,11 @@
   <!-- 3D WebGL Canvas (z-index: 1) -->
   <canvas id="webgl-canvas"></canvas>
 
-  <!-- Vignette + Atmospheric Overlay (z-index: 2) -->
+  <!-- Atmospheric Glow Vignette (z-index: 2) -->
   <div class="dreamy-overlay"></div>
 
   <!-- ═══════════════════════════════════════
-       HUD NAVIGATION (z-index: 30)
+       TOP NAVIGATION BAR (z-index: 30)
        ═══════════════════════════════════════ -->
   <header class="hud-nav">
     <div class="hud-brand">
@@ -38,17 +38,21 @@
       <button id="btn-sound" class="hud-pill hud-pill-sound" onclick="toggleAudio()" title="Toggle sparkle sounds">
         <span id="sound-icon">🎵</span><span id="sound-label">Sound: ON</span>
       </button>
+      <button class="hud-pill" onclick="switchSection('hero')">🌸 Home</button>
       <button class="hud-pill" onclick="switchSection('projects')">🚀 Projects</button>
-      <button class="hud-pill" onclick="switchSection('about')">🌸 About</button>
+      <button class="hud-pill" onclick="switchSection('about')">📖 About</button>
       <button class="hud-pill" onclick="switchSection('skills')">✨ Skills</button>
+      <button id="btn-toggle-hud" class="hud-pill hud-pill-view" onclick="toggleHUD()" title="Toggle UI to enjoy 3D scene">
+        👁️ Hide HUD
+      </button>
       <a href="mailto:jnanasadhasri.s@gmail.com" class="hud-pill hud-pill-primary">💌 Say Hello</a>
     </div>
   </header>
 
-  <!-- Interaction hint strip -->
+  <!-- Interactive Hint Ribbon -->
   <div class="interaction-hint">
     <span class="sparkle-glyph">✦</span>
-    Drag to rotate the enchanted island &nbsp;·&nbsp; Click to spawn sparkles &nbsp;·&nbsp; Scroll to zoom
+    <span>Drag to orbit the floral island &nbsp;·&nbsp; Click to burst hearts &amp; sparkles &nbsp;·&nbsp; Scroll to zoom</span>
     <span class="sparkle-glyph">✦</span>
   </div>
 
@@ -69,11 +73,10 @@
         </h2>
 
         <p class="hero-text">
-          I build delightful full-stack web applications, predictive atmospheric machine learning
-          models, and aesthetic interactive digital experiences.
+          Hello! I'm <strong>S. SadhaSri</strong>, a full-stack engineer and machine learning enthusiast. I design delightful interactive web platforms, build predictive data models, and bring aesthetic digital worlds to life.
         </p>
 
-        <!-- Metric Chips -->
+        <!-- Stat Chips -->
         <div class="hero-stats-row">
           <div class="hero-stat-chip">
             <span class="stat-number">13</span>
@@ -104,7 +107,7 @@
       </div>
     </section>
 
-    <!-- ── SECTION 2: PROJECTS ── -->
+    <!-- ── SECTION 2: PROJECTS (REFERENCE 02) ── -->
     <section id="sec-projects" class="hud-section">
       <div class="panel-card">
         <div class="panel-header">
@@ -116,15 +119,15 @@
         </div>
 
         <div class="project-grid">
-          <!-- Card 1 -->
+          <!-- Card 1: My Anime Shelf -->
           <article class="proj-card" onclick="openModal('animeshelf')">
             <div class="proj-badge-row">
-              <span class="proj-tag tag-pink">01 // WEB</span>
-              <span class="status-live">● Live ↗</span>
+              <span class="proj-tag tag-pink">01 // WEB CRAFT</span>
+              <span class="status-live">● Live Demo ↗</span>
             </div>
             <h4 class="proj-name">My Anime Shelf ✨</h4>
             <p class="proj-desc">
-              Anime tracking &amp; discovery platform with AniList GraphQL, Firebase auth, and responsive design tokens.
+              Anime discovery &amp; list tracking platform built with AniList GraphQL, Firebase authentication, and modern CSS design tokens.
             </p>
             <div class="proj-stack">
               <span>Vanilla JS</span>
@@ -133,15 +136,15 @@
             </div>
           </article>
 
-          <!-- Card 2 -->
+          <!-- Card 2: Air Quality Predictor -->
           <article class="proj-card" onclick="openModal('airquality')">
             <div class="proj-badge-row">
-              <span class="proj-tag tag-purple">02 // ML</span>
+              <span class="proj-tag tag-purple">02 // ML REGRESSION</span>
               <span class="status-metric">UCI PRSA</span>
             </div>
             <h4 class="proj-name">Air Quality Predictor 🌫️</h4>
             <p class="proj-desc">
-              PM2.5 atmospheric forecasting across 12 Beijing stations with ML regression models.
+              Multi-station atmospheric PM2.5 forecasting across 12 Beijing stations using time-series meteorological feature engineering.
             </p>
             <div class="proj-stack">
               <span>Python</span>
@@ -150,15 +153,15 @@
             </div>
           </article>
 
-          <!-- Card 3 -->
+          <!-- Card 3: Student Health Analytics -->
           <article class="proj-card" onclick="openModal('studenteda')">
             <div class="proj-badge-row">
-              <span class="proj-tag tag-sky">03 // DATA</span>
+              <span class="proj-tag tag-sky">03 // DATA SCIENCE</span>
               <span class="status-metric">EDA &amp; Stats</span>
             </div>
             <h4 class="proj-name">Student Health Analytics 📊</h4>
             <p class="proj-desc">
-              Python CLI app for student mental health data exploration and statistical pattern mining.
+              Exploratory Data Analysis CLI tool investigating demographic, academic, and lifestyle metrics impacting student well-being.
             </p>
             <div class="proj-stack">
               <span>Python</span>
@@ -167,27 +170,27 @@
             </div>
           </article>
 
-          <!-- Card 4 -->
+          <!-- Card 4: web2skill -->
           <article class="proj-card" onclick="openModal('web2skill')">
             <div class="proj-badge-row">
-              <span class="proj-tag tag-mint">04 // AI</span>
+              <span class="proj-tag tag-mint">04 // AI TOOLING</span>
               <span class="status-metric">Agent Skills</span>
             </div>
             <h4 class="proj-name">web2skill (w2s) 🪄</h4>
             <p class="proj-desc">
-              Automated generator turning websites into structured AI agent skill specs.
+              Automated generator converting web application interfaces into structured hierarchical SKILL.md specs for autonomous AI agents.
             </p>
             <div class="proj-stack">
               <span>Python</span>
               <span>Web Scraping</span>
-              <span>Markdown</span>
+              <span>AI Agents</span>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ── SECTION 3: ABOUT ── -->
+    <!-- ── SECTION 3: ABOUT (REFERENCE 01 & 02) ── -->
     <section id="sec-about" class="hud-section">
       <div class="panel-card max-w-2xl">
         <div class="panel-header">
@@ -199,30 +202,28 @@
         </div>
         <div class="about-content">
           <p>
-            Hello! I'm <strong>S. SadhaSri</strong>, a developer from India passionate about building
-            delightful, modern web experiences and intelligent predictive systems. I believe that
-            great software should feel <em>joyful</em> to use.
+            Hello there! I'm <strong>S. SadhaSri</strong>, a developer based in India. I love blending technical rigor with heartfelt creative design. For me, coding isn't just about syntax — it's about making things that feel intuitive, joyful, and memorable.
           </p>
           <div class="about-grid">
             <div class="about-box">
               <span class="about-box-icon">🎨</span>
-              <h5>Aesthetic &amp; Empathy</h5>
-              <p>I craft UIs with intention — clean design tokens, smooth transitions, and genuine delight at every interaction.</p>
+              <h5>Empathy &amp; Design</h5>
+              <p>Crafting UIs with intentional color harmony, accessible typography, and delightful micro-interactions.</p>
             </div>
             <div class="about-box">
               <span class="about-box-icon">📊</span>
               <h5>Data &amp; Intelligence</h5>
-              <p>Comfortable with real-world datasets, statistical analysis, and machine learning models that turn observations into insight.</p>
+              <p>Building predictive pipelines and uncovering real-world statistical insights using Python and ML.</p>
             </div>
             <div class="about-box">
               <span class="about-box-icon">🌸</span>
-              <h5>Creative Spirit</h5>
-              <p>From anime-themed apps to atmospheric ML models, every project reflects curiosity and a personal creative vision.</p>
+              <h5>Creative Curiosity</h5>
+              <p>Constantly exploring new tools: from 3D WebGL scenes to GraphQL APIs and autonomous AI agent skills.</p>
             </div>
             <div class="about-box">
               <span class="about-box-icon">🤝</span>
-              <h5>Open Collaboration</h5>
-              <p>All work is open source. I believe great software grows through sharing and community learning.</p>
+              <h5>Open Source Spirit</h5>
+              <p>All projects and experiments are open source, shared to inspire and learn alongside the developer community.</p>
             </div>
           </div>
           <p class="about-quote">
@@ -244,7 +245,7 @@
         </div>
         <div class="skill-garden-grid">
           <div class="skill-group">
-            <h5 class="skill-group-title">🌸 Languages</h5>
+            <h5 class="skill-group-title">🌸 Core Languages</h5>
             <div class="skill-badges">
               <span class="skill-pill">Python</span>
               <span class="skill-pill">JavaScript ES6+</span>
@@ -255,7 +256,7 @@
             </div>
           </div>
           <div class="skill-group">
-            <h5 class="skill-group-title">🎨 Frontend &amp; APIs</h5>
+            <h5 class="skill-group-title">🎨 Frontend &amp; Cloud</h5>
             <div class="skill-badges">
               <span class="skill-pill">React</span>
               <span class="skill-pill">AniList GraphQL</span>
@@ -272,8 +273,8 @@
               <span class="skill-pill">Pandas</span>
               <span class="skill-pill">NumPy</span>
               <span class="skill-pill">Matplotlib</span>
-              <span class="skill-pill">EDA</span>
-              <span class="skill-pill">Jupyter</span>
+              <span class="skill-pill">Seaborn</span>
+              <span class="skill-pill">Jupyter Notebooks</span>
             </div>
           </div>
           <div class="skill-group">
@@ -293,7 +294,7 @@
   </main>
 
   <!-- ═══════════════════════════════════════
-       PROJECT MODAL
+       PROJECT DETAIL MODAL
        ═══════════════════════════════════════ -->
   <div id="project-modal" class="modal-backdrop" onclick="closeModal(event)">
     <div class="modal-window" onclick="event.stopPropagation()">
@@ -303,15 +304,15 @@
   </div>
 
   <!-- ═══════════════════════════════════════
-       HUD FOOTER
+       HUD FOOTER (z-index: 25)
        ═══════════════════════════════════════ -->
   <footer class="hud-footer">
     <div class="footer-left">
       <span class="pulse-sparkle">🌸</span>
-      <span>Enchanted Dreamscape · WebGL 3D · 60fps</span>
+      <span>Enchanted Pastel Dreamscape · Three.js WebGL 3D</span>
     </div>
     <div class="footer-right">
-      <span>Built with Three.js &amp; ♡ · S. SadhaSri</span>
+      <span>Designed with ♡ for S. SadhaSri · 2026</span>
     </div>
   </footer>
 
