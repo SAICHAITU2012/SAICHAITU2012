@@ -1,6 +1,7 @@
 // =========================================================================
-// 🌸✨ S. SADHASRI — ENCHANTED PASTEL DREAMSCAPE 3D PORTFOLIO v5.2
-// Masterpiece Floral Bouquet · Saturated Sunset · Cozy 3D Studio
+// 🌸✨ S. SADHASRI — ENCHANTED PASTEL DREAMSCAPE 3D PORTFOLIO v5.3
+// Dreamscape Deluxe: rotating sky dome · soft shadows · holographic dust ·
+// cat companion · living laptop screen · cinematic camera intro
 // =========================================================================
 
 // --- 01. AUDIO ENGINE (PLAYFUL SYNTH CHIMES) ---
@@ -65,16 +66,18 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-// --- 03. VIBRANT SUNSET SKY DOME (CANVAS TEXTURE) ---
+// --- 03. VIBRANT SUNSET SKY DOME (TRUE 3D DOME, ROTATES WITH THE WORLD) ---
 (function initSunsetSky() {
   const c = document.createElement('canvas');
-  c.width = 512;
-  c.height = 512;
+  c.width = 1024;
+  c.height = 1024;
   const ctx = c.getContext('2d');
-  
+
   // Rich vertical sunset gradient (Lilac Twilight -> Magenta Rose -> Sunset Coral -> Warm Peach -> Golden Sunrise)
-  const g = ctx.createLinearGradient(0, 0, 0, 512);
+  const g = ctx.createLinearGradient(0, 0, 0, 1024);
   g.addColorStop(0.00, '#321E56'); // Deep celestial violet
   g.addColorStop(0.20, '#5C2D7E'); // Rich royal lilac
   g.addColorStop(0.38, '#993574'); // Vivid orchid
@@ -82,24 +85,67 @@ renderer.toneMappingExposure = 1.0;
   g.addColorStop(0.72, '#F06363'); // Radiant sunset coral
   g.addColorStop(0.86, '#FFA05A'); // Warm peach
   g.addColorStop(1.00, '#FFDC88'); // Golden sunrise cream
-  
+
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 512, 512);
-  
-  // Paint twinkling stars in upper celestial sky
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-  for (let i = 0; i < 95; i++) {
-    const sx = Math.random() * 512;
-    const sy = Math.random() * 260;
-    const sr = Math.random() * 1.6 + 0.4;
+  ctx.fillRect(0, 0, 1024, 1024);
+
+  // Big soft sun bloom low on the horizon (behind the island)
+  const sun = ctx.createRadialGradient(512, 900, 40, 512, 900, 300);
+  sun.addColorStop(0, 'rgba(255, 244, 214, 0.95)');
+  sun.addColorStop(0.35, 'rgba(255, 200, 150, 0.55)');
+  sun.addColorStop(1, 'rgba(255, 170, 120, 0)');
+  ctx.fillStyle = sun;
+  ctx.fillRect(0, 560, 1024, 464);
+
+  // Twinkling stars in the upper celestial sky (with 4-point sparkles)
+  for (let i = 0; i < 190; i++) {
+    const sx = Math.random() * 1024;
+    const sy = Math.random() * 480;
+    const sr = Math.random() * 1.8 + 0.4;
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.55 + Math.random() * 0.4})`;
     ctx.beginPath();
     ctx.arc(sx, sy, sr, 0, Math.PI * 2);
     ctx.fill();
+    if (Math.random() > 0.82) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.lineWidth = 1;
+      const l = sr * 3.2;
+      ctx.beginPath();
+      ctx.moveTo(sx - l, sy); ctx.lineTo(sx + l, sy);
+      ctx.moveTo(sx, sy - l); ctx.lineTo(sx, sy + l);
+      ctx.stroke();
+    }
   }
-  
+
+  // Far dreamy cloud bands baked into the dome
+  for (let i = 0; i < 26; i++) {
+    const cx = Math.random() * 1024;
+    const cy = 620 + Math.random() * 260;
+    const cw = 90 + Math.random() * 210;
+    ctx.fillStyle = `rgba(255, 225, 235, ${0.07 + Math.random() * 0.1})`;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, cw, 16 + Math.random() * 26, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   const skyTex = new THREE.CanvasTexture(c);
   skyTex.generateMipmaps = true;
-  scene.background = skyTex;
+  // keep the sunset rich, not washed (new + legacy three.js APIs)
+  if (THREE.SRGBColorSpace) skyTex.colorSpace = THREE.SRGBColorSpace;
+  else if (THREE.sRGBEncoding) skyTex.encoding = THREE.sRGBEncoding;
+
+  // True 3D dome: orbits with the camera instead of being screen-locked
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(320, 40, 28),
+    new THREE.MeshBasicMaterial({
+      map: skyTex,
+      side: THREE.BackSide,
+      fog: false,
+      depthWrite: false
+    })
+  );
+  dome.renderOrder = -1;
+  scene.add(dome);
 })();
 
 // Distant warm fog: Starts far away (110 units)
@@ -109,9 +155,18 @@ scene.fog = new THREE.Fog(0xFFA090, 110, 300);
 const ambientLight = new THREE.AmbientLight(0xFFE0E8, 0.65);
 scene.add(ambientLight);
 
-// Golden sunlight from top right
+// Golden sunlight from top right (shadow caster)
 const sunLight = new THREE.DirectionalLight(0xFFF0D4, 1.35);
 sunLight.position.set(20, 32, 24);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(1024, 1024);
+sunLight.shadow.camera.left = -42;
+sunLight.shadow.camera.right = 42;
+sunLight.shadow.camera.top = 42;
+sunLight.shadow.camera.bottom = -12;
+sunLight.shadow.camera.near = 1;
+sunLight.shadow.camera.far = 130;
+sunLight.shadow.bias = -0.0006;
 scene.add(sunLight);
 
 // Saturated Magenta-Pink fill light from left-front
@@ -305,6 +360,7 @@ const baseMat = new THREE.MeshStandardMaterial({
 });
 const baseMesh = new THREE.Mesh(new THREE.CylinderGeometry(13.2, 9.2, 3.8, 44), baseMat);
 baseMesh.position.y = -3.0;
+baseMesh.receiveShadow = true;
 islandGroup.add(baseMesh);
 
 // Middle bevel tier (warm apricot)
@@ -314,9 +370,10 @@ const midTierMat = new THREE.MeshStandardMaterial({
 });
 const midTier = new THREE.Mesh(new THREE.CylinderGeometry(14.2, 13.2, 0.9, 44), midTierMat);
 midTier.position.y = -0.85;
+midTier.receiveShadow = true;
 islandGroup.add(midTier);
 
-// Top surface deck (Creamy blush surface)
+// Top surface deck (Creamy blush surface — receives soft shadows)
 const deckMat = new THREE.MeshStandardMaterial({
   color: 0xFFF0F5,
   roughness: 0.5,
@@ -326,7 +383,37 @@ const deckMat = new THREE.MeshStandardMaterial({
 });
 const deck = new THREE.Mesh(new THREE.CylinderGeometry(14.6, 14.2, 0.7, 48), deckMat);
 deck.position.y = -0.32;
+deck.receiveShadow = true;
 islandGroup.add(deck);
+
+// Blush rug under the desk setup (cozy grounding detail)
+const rug = new THREE.Mesh(
+  new THREE.CircleGeometry(9.6, 40),
+  new THREE.MeshStandardMaterial({
+    color: 0xFFD6E2,
+    roughness: 0.85,
+    emissive: 0xFF8FB5,
+    emissiveIntensity: 0.05
+  })
+);
+rug.rotation.x = -Math.PI / 2;
+rug.position.y = 0.035;
+rug.receiveShadow = true;
+islandGroup.add(rug);
+
+const rugRim = new THREE.Mesh(
+  new THREE.RingGeometry(9.1, 9.6, 40),
+  new THREE.MeshStandardMaterial({
+    color: 0xFF7BAC,
+    roughness: 0.6,
+    emissive: 0xFF1493,
+    emissiveIntensity: 0.22
+  })
+);
+rugRim.rotation.x = -Math.PI / 2;
+rugRim.position.y = 0.045;
+rugRim.receiveShadow = true;
+islandGroup.add(rugRim);
 
 // Vivid Strawberry Glowing Accent Rim
 const rimMat = new THREE.MeshStandardMaterial({
@@ -360,7 +447,7 @@ islandGroup.add(islandAura);
 const flowerGroup = new THREE.Group();
 islandGroup.add(flowerGroup);
 
-// Petal geometry builder with CAMERA-FACING TILT and rich depth
+// Petal geometry builder with CAMERA-FACING TILT, rich depth & TWO-TONE shading
 function createSculptedFlower(x, y, z, scale, petalCol, centerCol, tiltX = 0.5, tiltY = 0) {
   const flower = new THREE.Group();
   flower.position.set(x, y, z);
@@ -380,14 +467,17 @@ function createSculptedFlower(x, y, z, scale, petalCol, centerCol, tiltX = 0.5, 
   );
   flower.add(center);
 
-  // Layer 1: Inner 5 petals
+  const innerCol = new THREE.Color(petalCol).multiplyScalar(0.82); // deep velvet inner ring
+  const outerCol = new THREE.Color(petalCol).lerp(new THREE.Color(0xFFFFFF), 0.22); // sun-kissed outer ring
+
+  // Layer 1: Inner 5 petals (velvet depth)
   const innerPetalGeo = new THREE.SphereGeometry(0.3, 10, 8);
   innerPetalGeo.scale(1.5, 0.5, 0.8);
   const innerMat = new THREE.MeshStandardMaterial({
-    color: petalCol,
+    color: innerCol,
     roughness: 0.35,
     metalness: 0.05,
-    emissive: petalCol,
+    emissive: innerCol,
     emissiveIntensity: 0.25
   });
   for (let i = 0; i < 5; i++) {
@@ -396,6 +486,7 @@ function createSculptedFlower(x, y, z, scale, petalCol, centerCol, tiltX = 0.5, 
     p.position.set(Math.cos(a) * 0.42, 0.1, Math.sin(a) * 0.42);
     p.rotation.y = a;
     p.rotation.z = 0.35; // upward cup
+    p.castShadow = true;
     flower.add(p);
   }
 
@@ -403,10 +494,10 @@ function createSculptedFlower(x, y, z, scale, petalCol, centerCol, tiltX = 0.5, 
   const outerPetalGeo = new THREE.SphereGeometry(0.36, 10, 8);
   outerPetalGeo.scale(1.8, 0.4, 0.9);
   const outerMat = new THREE.MeshStandardMaterial({
-    color: petalCol,
+    color: outerCol,
     roughness: 0.4,
     metalness: 0.02,
-    emissive: petalCol,
+    emissive: outerCol,
     emissiveIntensity: 0.2
   });
   for (let i = 0; i < 7; i++) {
@@ -415,6 +506,7 @@ function createSculptedFlower(x, y, z, scale, petalCol, centerCol, tiltX = 0.5, 
     p.position.set(Math.cos(a) * 0.72, 0.0, Math.sin(a) * 0.72);
     p.rotation.y = a;
     p.rotation.z = 0.18;
+    p.castShadow = true;
     flower.add(p);
   }
 
@@ -532,6 +624,7 @@ const laptopChassisMat = new THREE.MeshStandardMaterial({
 
 // Base keyboard chassis
 const lapBase = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.24, 4.4), laptopChassisMat);
+lapBase.castShadow = true;
 laptopGroup.add(lapBase);
 
 // Keyboard well (darker mauve inset)
@@ -558,6 +651,7 @@ laptopGroup.add(lidGroup);
 
 const screenLid = new THREE.Mesh(new THREE.BoxGeometry(6.4, 4.4, 0.18), laptopChassisMat);
 screenLid.position.set(0, 2.2, 0);
+screenLid.castShadow = true;
 lidGroup.add(screenLid);
 
 // Glowing Screen Display (Canvas Texture with Cute Code & Hearts!)
@@ -566,10 +660,10 @@ screenCanvas.width = 512;
 screenCanvas.height = 340;
 const sctx = screenCanvas.getContext('2d');
 
-function updateScreenTexture() {
+function updateScreenTexture(ts = 0) {
   sctx.fillStyle = '#1E0B2E'; // Deep purple screen background
   sctx.fillRect(0, 0, 512, 340);
-  
+
   // Cute browser tab bar
   sctx.fillStyle = '#321448';
   sctx.fillRect(0, 0, 512, 38);
@@ -583,7 +677,7 @@ function updateScreenTexture() {
   // Screen text
   sctx.fillStyle = '#F472B6';
   sctx.font = 'bold 22px "Quicksand", sans-serif';
-  sctx.fillText('🌸 sadhasri.studio · v5.2', 76, 26);
+  sctx.fillText('🌸 sadhasri.studio · v5.3', 76, 26);
 
   sctx.fillStyle = '#FFFFFF';
   sctx.font = 'bold 30px "Plus Jakarta Sans", sans-serif';
@@ -595,8 +689,14 @@ function updateScreenTexture() {
   sctx.fillText('const specialty = ["Web", "ML", "3D"];', 30, 174);
   sctx.fillText('const mission   = "Delight & Impact 🌸";', 30, 210);
 
-  // Mini project badge
-  sctx.fillStyle = 'rgba(255, 20, 147, 0.32)';
+  // Living blinking cursor at the end of the last code line
+  if ((ts % 1.0) < 0.55) {
+    sctx.fillStyle = '#67E8F9';
+    sctx.fillRect(398, 192, 12, 22);
+  }
+
+  // Mini project badge (breathing shimmer)
+  sctx.fillStyle = `rgba(255, 20, 147, ${0.28 + Math.sin(ts * 2.1) * 0.09})`;
   sctx.fillRect(30, 244, 250, 56);
   sctx.strokeStyle = '#FF1493';
   sctx.lineWidth = 2.5;
@@ -606,14 +706,26 @@ function updateScreenTexture() {
   sctx.font = 'bold 18px "Quicksand", sans-serif';
   sctx.fillText('🚀 My Anime Shelf (Live)', 45, 280);
 
-  // Big cute heart in right corner
+  // Big cute heart in right corner (gentle heartbeat scale pulse)
+  const beat = 1 + Math.max(0, Math.sin(ts * 3.4)) * 0.12;
+  sctx.save();
+  sctx.translate(432, 252);
+  sctx.scale(beat, beat);
   sctx.fillStyle = '#FF1493';
   sctx.font = '58px sans-serif';
-  sctx.fillText('💖', 405, 270);
+  sctx.fillText('💖', -26, 24);
+  sctx.restore();
 }
 updateScreenTexture();
+setInterval(() => {
+  if (typeof STATIC_SHOTS !== 'undefined' && STATIC_SHOTS) return;
+  updateScreenTexture(performance.now() / 1000);
+  screenTexture.needsUpdate = true;
+}, 380);
 
 const screenTexture = new THREE.CanvasTexture(screenCanvas);
+if (THREE.SRGBColorSpace) screenTexture.colorSpace = THREE.SRGBColorSpace;
+else if (THREE.sRGBEncoding) screenTexture.encoding = THREE.sRGBEncoding;
 const screenMat = new THREE.MeshStandardMaterial({
   map: screenTexture,
   roughness: 0.2,
@@ -643,6 +755,7 @@ const mugMat = new THREE.MeshStandardMaterial({
 // Mug body
 const mugBody = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.8, 1.9, 24), mugMat);
 mugBody.position.y = 0.95;
+mugBody.castShadow = true;
 mugGroup.add(mugBody);
 
 // Mug handle
@@ -704,6 +817,7 @@ bookColors.forEach((bk, i) => {
   );
   bMesh.position.set((i - 1.5) * 0.09, currentBookY + bk.thick / 2, (i - 1.5) * 0.07);
   bMesh.rotation.y = (i - 1.5) * 0.08;
+  bMesh.castShadow = true;
   bookGroup.add(bMesh);
   currentBookY += bk.thick;
 });
@@ -733,6 +847,7 @@ const potMesh = new THREE.Mesh(
   })
 );
 potMesh.position.y = 0.95;
+potMesh.castShadow = true;
 plantGroup.add(potMesh);
 
 // Soil
@@ -767,7 +882,124 @@ for (let layer = 0; layer < 3; layer++) {
   }
 }
 
-// 9E. FLOATING 3D EXTRUDED HEARTS ABOVE LAPTOP
+// 9E. MISO — THE PASTEL STUDIO CAT (sits atop the book stack, tail swaying)
+const catGroup = new THREE.Group();
+catGroup.position.set(0.1, currentBookY, -0.1);
+catGroup.rotation.y = -0.5;
+bookGroup.add(catGroup);
+
+const catFurMat = new THREE.MeshStandardMaterial({
+  color: 0xFFF4F8,
+  roughness: 0.75,
+  metalness: 0,
+  emissive: 0xFFC4D6,
+  emissiveIntensity: 0.07
+});
+const catPatchMat = new THREE.MeshStandardMaterial({
+  color: 0xFFB7C9,
+  roughness: 0.75,
+  emissive: 0xFF8FB5,
+  emissiveIntensity: 0.06
+});
+
+// Body + chest
+const catBody = new THREE.Mesh(new THREE.SphereGeometry(0.62, 18, 14), catFurMat);
+catBody.scale.set(1.0, 0.85, 1.2);
+catBody.position.y = 0.52;
+catBody.castShadow = true;
+catGroup.add(catBody);
+
+// Head
+const catHead = new THREE.Mesh(new THREE.SphereGeometry(0.44, 18, 14), catFurMat);
+catHead.position.set(0, 1.14, 0.28);
+catHead.castShadow = true;
+catGroup.add(catHead);
+
+// Ears (outer + inner pink)
+[-1, 1].forEach(side => {
+  const ear = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.34, 8), catFurMat);
+  ear.position.set(side * 0.24, 1.52, 0.2);
+  ear.rotation.z = -side * 0.3;
+  catGroup.add(ear);
+  const innerEar = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.2, 8), catPatchMat);
+  innerEar.position.set(side * 0.24, 1.5, 0.23);
+  innerEar.rotation.z = -side * 0.3;
+  catGroup.add(innerEar);
+});
+
+// Face — eyes (blink via scale), nose
+const catEyes = [];
+[-1, 1].forEach(side => {
+  const eye = new THREE.Mesh(
+    new THREE.SphereGeometry(0.055, 8, 8),
+    new THREE.MeshStandardMaterial({ color: 0x2D1B3D, roughness: 0.2 })
+  );
+  eye.position.set(side * 0.17, 1.2, 0.66);
+  catGroup.add(eye);
+  catEyes.push(eye);
+  const glint = new THREE.Mesh(
+    new THREE.SphereGeometry(0.016, 6, 6),
+    new THREE.MeshBasicMaterial({ color: 0xFFFFFF })
+  );
+  glint.position.set(side * 0.15, 1.23, 0.71);
+  catGroup.add(glint);
+});
+const catNose = new THREE.Mesh(
+  new THREE.SphereGeometry(0.04, 8, 8),
+  new THREE.MeshStandardMaterial({ color: 0xFF7BAC, emissive: 0xFF1493, emissiveIntensity: 0.3 })
+);
+catNose.scale.set(1.3, 0.8, 0.7);
+catNose.position.set(0, 1.08, 0.7);
+catGroup.add(catNose);
+
+// Blush cheeks
+[-1, 1].forEach(side => {
+  const blush = new THREE.Mesh(
+    new THREE.CircleGeometry(0.07, 10),
+    new THREE.MeshBasicMaterial({ color: 0xFF9FBE, transparent: true, opacity: 0.55 })
+  );
+  blush.position.set(side * 0.28, 1.05, 0.6);
+  blush.rotation.y = side * 0.5;
+  catGroup.add(blush);
+});
+
+// Golden collar + bell
+const collar = new THREE.Mesh(
+  new THREE.TorusGeometry(0.36, 0.05, 8, 20),
+  new THREE.MeshStandardMaterial({ color: 0xFBBF24, roughness: 0.3, metalness: 0.5, emissive: 0xD97706, emissiveIntensity: 0.3 })
+);
+collar.rotation.x = Math.PI / 2.4;
+collar.position.set(0, 0.88, 0.22);
+catGroup.add(collar);
+const bell = new THREE.Mesh(
+  new THREE.SphereGeometry(0.07, 10, 10),
+  new THREE.MeshStandardMaterial({ color: 0xFFDF70, roughness: 0.25, metalness: 0.6, emissive: 0xD97706, emissiveIntensity: 0.4 })
+);
+bell.position.set(0, 0.78, 0.5);
+catGroup.add(bell);
+
+// Swaying tail (3-segment chain)
+const tailGroup = new THREE.Group();
+tailGroup.position.set(0, 0.5, -0.62);
+catGroup.add(tailGroup);
+let tailTip = tailGroup;
+const tailSegs = [];
+const tailCurve = [0.28, 0.26, 0.22];
+tailCurve.forEach((r, i) => {
+  const seg = new THREE.Group();
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), i === 2 ? catPatchMat : catFurMat);
+  ball.castShadow = true;
+  seg.add(ball);
+  seg.position.y = i === 0 ? 0 : tailCurve[i - 1] * 1.7;
+  tailTip.add(seg);
+  tailTip = seg;
+  tailSegs.push(seg);
+});
+tailSegs[0].rotation.x = 0.9;
+tailSegs[1].rotation.x = 0.5;
+tailSegs[2].rotation.x = -0.7;
+
+// 9F. FLOATING 3D EXTRUDED HEARTS ABOVE LAPTOP
 const heartShape = new THREE.Shape();
 heartShape.moveTo(0, 0.4);
 heartShape.bezierCurveTo(0, 0.8, -0.7, 1.15, -1.15, 0.8);
@@ -812,7 +1044,22 @@ islandGroup.add(miniHeart);
 const sparkleGroup = new THREE.Group();
 scene.add(sparkleGroup);
 
-// Ambient golden dust
+// Soft round glow texture (particles become luminous orbs, not squares)
+function makeGlowTexture() {
+  const gc = document.createElement('canvas');
+  gc.width = gc.height = 64;
+  const g2 = gc.getContext('2d');
+  const grad = g2.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  grad.addColorStop(0.35, 'rgba(255, 255, 255, 0.65)');
+  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  g2.fillStyle = grad;
+  g2.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(gc);
+}
+const glowTex = makeGlowTexture();
+
+// Ambient golden dust — now soft additive glowing orbs
 const DUST_COUNT = 240;
 const dustPos = new Float32Array(DUST_COUNT * 3);
 for (let i = 0; i < DUST_COUNT; i++) {
@@ -826,14 +1073,42 @@ const dustPoints = new THREE.Points(
   dustGeo,
   new THREE.PointsMaterial({
     color: 0xFFDF70,
-    size: 0.6,
+    map: glowTex,
+    size: 0.8,
     transparent: true,
-    opacity: 0.85,
+    opacity: 0.9,
     sizeAttenuation: true,
-    depthWrite: false
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
   })
 );
 sparkleGroup.add(dustPoints);
+
+// Fireflies weaving through the bouquet (additive glow points)
+const fireflyGroup = new THREE.Group();
+scene.add(fireflyGroup);
+const FF_COUNT = 16;
+const ffPos = new Float32Array(FF_COUNT * 3);
+for (let i = 0; i < FF_COUNT; i++) {
+  const ang = Math.random() * Math.PI * 2;
+  const rad = 6 + Math.random() * 12;
+  ffPos[i * 3 + 0] = Math.cos(ang) * rad;
+  ffPos[i * 3 + 1] = 1.5 + Math.random() * 5.5;
+  ffPos[i * 3 + 2] = Math.sin(ang) * rad;
+}
+const ffGeo = new THREE.BufferGeometry();
+ffGeo.setAttribute('position', new THREE.BufferAttribute(ffPos, 3));
+const ffMat = new THREE.PointsMaterial({
+  color: 0xFFE9A8,
+  map: glowTex,
+  size: 1.15,
+  transparent: true,
+  opacity: 0.9,
+  sizeAttenuation: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending
+});
+fireflyGroup.add(new THREE.Points(ffGeo, ffMat));
 
 // 40 Floating 3D Octahedron Stars
 const starsList = [];
@@ -899,6 +1174,27 @@ for (let i = 0; i < 140; i++) {
   };
   petalGroup.add(pMesh);
   petalsList.push(pMesh);
+}
+
+// Scattered fallen petals on the deck (grounded cuteness)
+const fallenPetals = [];
+for (let i = 0; i < 16; i++) {
+  const fp = new THREE.Mesh(
+    petalBaseGeo,
+    new THREE.MeshStandardMaterial({
+      color: PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)],
+      roughness: 0.6,
+      side: THREE.DoubleSide
+    })
+  );
+  const ang = Math.random() * Math.PI * 2;
+  const rad = 5.5 + Math.random() * 8.0;
+  fp.position.set(Math.cos(ang) * rad, 0.06, Math.sin(ang) * rad);
+  fp.rotation.set(-Math.PI / 2 + (Math.random() - 0.5) * 0.3, 0, Math.random() * Math.PI);
+  fp.scale.setScalar(0.8 + Math.random() * 0.5);
+  fp.receiveShadow = true;
+  islandGroup.add(fp);
+  fallenPetals.push(fp);
 }
 
 // --- 12. INTERACTIVE CLICK/TOUCH BURSTS ---
@@ -968,6 +1264,7 @@ window.addEventListener('mousemove', e => {
 });
 
 window.addEventListener('wheel', e => {
+  if (introT < 1) return; // no zoom during the cinematic intro
   camera.position.z += e.deltaY * 0.025;
   camera.position.z = Math.max(20, Math.min(65, camera.position.z));
 }, { passive: true });
@@ -994,8 +1291,15 @@ window.addEventListener('resize', () => {
 // --- 14. ANIMATION LOOP ---
 const clock = new THREE.Clock();
 
+// Cinematic camera intro: glide from a high wide shot down into the scene
+let introT = 0;
+camera.position.set(0, 13.5, 52);
+
+// Static-render mode for QA screenshots: settle then freeze the loop
+const STATIC_SHOTS = new URLSearchParams(location.search).has('static');
+let frameCount = 0;
+
 function animate() {
-  requestAnimationFrame(animate);
   const t = clock.getElapsedTime();
 
   // Island smooth rotation & gentle bobbing
@@ -1006,6 +1310,15 @@ function animate() {
   islandGroup.rotation.x += (targetRotX - islandGroup.rotation.x) * 0.07;
   islandGroup.position.y = Math.sin(t * 1.2) * 0.45;
 
+  // Camera intro glide (ease-out cubic), then lookAt every frame
+  if (introT < 1) {
+    introT = Math.min(1, introT + 0.014);
+    const eased = 1 - Math.pow(1 - introT, 3);
+    camera.position.y = 13.5 + (8.5 - 13.5) * eased;
+    camera.position.z = 52 + (33 - 52) * eased;
+  }
+  camera.lookAt(0, 2.0, 0);
+
   // Knot rotation
   knotMesh.rotation.x = t * 0.4;
   knotMesh.rotation.y = t * 0.3;
@@ -1015,6 +1328,15 @@ function animate() {
   heroHeart.rotation.y = t * 1.4;
   miniHeart.position.y = 3.8 + Math.cos(t * 2.0) * 0.28;
   miniHeart.rotation.y = -t * 1.2;
+
+  // MISO the studio cat — tail sway, head tilt, slow blinks
+  tailSegs.forEach((seg, i) => {
+    seg.rotation.z = Math.sin(t * 2.1 + i * 0.7) * 0.2;
+  });
+  catHead.rotation.z = Math.sin(t * 1.1) * 0.06;
+  const blinkPhase = t % 4.4;
+  const blinking = blinkPhase > 4.15 && blinkPhase < 4.32;
+  catEyes.forEach(e => { e.scale.y = blinking ? 0.12 : 1; });
 
   // Flower blossoms swaying gently
   flowersList.forEach(f => {
@@ -1055,8 +1377,11 @@ function animate() {
     }
   });
 
-  // Sparkles spin
+  // Sparkles + fireflies drift
   sparkleGroup.rotation.y = t * 0.01;
+  fireflyGroup.rotation.y = t * 0.06;
+  fireflyGroup.position.y = Math.sin(t * 1.5) * 0.5;
+  ffMat.opacity = 0.7 + Math.sin(t * 2.2) * 0.25;
 
   // Dynamic light pulses
   pinkFill.intensity = 1.6 + Math.sin(t * 1.8) * 0.3;
@@ -1077,6 +1402,12 @@ function animate() {
   }
 
   renderer.render(scene, camera);
+
+  if (STATIC_SHOTS) {
+    if (++frameCount < 140) requestAnimationFrame(animate); // settle ~2.3s then freeze
+    return;
+  }
+  requestAnimationFrame(animate);
 }
 animate();
 
