@@ -1,8 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   S. SadhaSri // Engineering Portfolio — v6.0 "TERMINAL"
-   app.js — vanilla JS, no dependencies
-   modules: boot · constellation · typed roles · terminal ·
-            scroll · reveal · counters · ⌘K palette
+   S. SADHASRI — SHADOW ARC v7.0 "THE ARCANE ENGINEER"
+   app.js — boot · typed roles · counters · reveals · audio ·
+            shadow-mode ⌘K palette · QA hooks — vanilla JS
    ═══════════════════════════════════════════════════════════════ */
 
 (() => {
@@ -11,34 +10,33 @@
   const PARAMS = new URLSearchParams(location.search);
   const REDUCED =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-    PARAMS.has("static"); // render everything instantly (testing / no-JS-style preview)
+    PARAMS.has("static");
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
   if (PARAMS.has("static")) {
     document.documentElement.style.scrollBehavior = "auto";
-    document.documentElement.classList.add("static-render"); // freeze all CSS animation for capture
+    document.documentElement.classList.add("static-render"); // freeze CSS animation for capture
   }
 
   let countersStarted = false;
 
-  /* ── 1 · boot sequence ─────────────────────────────────────── */
+  /* ── 1 · boot: releasing the seal ───────────────────────────── */
 
-  const boot = $("#boot-overlay");
+  const boot = $("#boot");
   const bootLines = $(".boot-lines", boot);
   const bootFill = $(".boot-bar-fill", boot);
 
   const BOOT_SCRIPT = [
-    "$ init sadhasri.sys --env=portfolio",
-    "loading modules .......... <ok>[ok]</ok>",
-    "constellation engine ..... <ok>[ok]</ok>",
-    "open-source index ........ <hl>13 repos</hl>",
-    "ready. <hl>> welcome, visitor</hl>",
+    "releasing the seal <hl>解</hl> .......... <ok>[ok]</ok>",
+    "loading shadow techniques .............. <ok>[ok]</ok>",
+    "summoning interface .................... <ok>[ok]</ok>",
+    "arc 01 — <hl>the awakening</hl>. welcome, visitor.",
   ];
 
   function finishBoot() {
     boot.classList.add("done");
-    setTimeout(() => boot.remove(), 500);
+    setTimeout(() => boot.remove(), 520);
     startCounters();
   }
 
@@ -57,36 +55,30 @@
           .replace(/<\/hl>/g, "</span>");
         bootLines.appendChild(el);
         bootFill.style.width = `${((i + 1) / BOOT_SCRIPT.length) * 100}%`;
-      }, 120 + i * 170);
+      }, 140 + i * 190);
     });
-    setTimeout(finishBoot, 120 + BOOT_SCRIPT.length * 170 + 350);
+    setTimeout(finishBoot, 140 + BOOT_SCRIPT.length * 190 + 380);
     boot.addEventListener("click", finishBoot, { once: true });
   }
 
-  /* ── 2 · background scene ──────────────────────────────────── */
-  /* cinematic 3D background lives in scene3d.js (Three.js);
-     replaced the flat 2D constellation layer */
+  /* ── 2 · typed roles ────────────────────────────────────────── */
 
-  /* ── 3 · typed roles ───────────────────────────────────────── */
-
-  const typedEl = $("#typed-roles");
+  const typedEl = $("#typed");
   const ROLES = [
     "full-stack developer",
     "ml & data-science enthusiast",
     "agent-tooling builder",
-    "creative technologist",
+    "the arcane engineer",
   ];
 
   if (REDUCED) {
     typedEl.textContent = ROLES[0];
   } else {
     let roleIdx = 0, charIdx = 0, deleting = false;
-
-    function typeTick() {
+    (function typeTick() {
       const word = ROLES[roleIdx];
       charIdx += deleting ? -1 : 1;
       typedEl.textContent = word.slice(0, charIdx);
-
       let delay = deleting ? 34 : 62;
       if (!deleting && charIdx === word.length) { delay = 2100; deleting = true; }
       else if (deleting && charIdx === 0) {
@@ -95,114 +87,23 @@
         delay = 420;
       }
       setTimeout(typeTick, delay);
-    }
-    typeTick();
+    })();
   }
 
-  /* ── 4 · terminal card ─────────────────────────────────────── */
-
-  const term = $("#terminal-screen");
-
-  const TERM_SCRIPT = [
-    { cmd: "whoami", out: '<span class="t-out">S. SadhaSri · full-stack engineer · India</span>' },
-    { cmd: "ls ./focus", out: '<span class="t-path">web-craft/  ml-pipelines/  agent-tooling/</span>' },
-    { cmd: "gh repo list --public", out: '<span class="t-hl">13 repos · 100% open source</span>' },
-    { cmd: "./contact --init", out: '<span class="t-hl">→</span> <span class="t-out">jnanasadhasri.s@gmail.com</span>' },
-  ];
-
-  function renderTerminalInstant() {
-    term.innerHTML = TERM_SCRIPT.map(
-      (s) => `<span class="t-prompt">$</span> <span class="t-cmd">${s.cmd}</span>\n${s.out}\n`
-    ).join("") + '<span class="t-prompt">$</span> <span class="typed-caret">▌</span>';
-  }
-
-  if (REDUCED) {
-    renderTerminalInstant();
-  } else {
-    const io = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        io.disconnect();
-        runTerminal();
-      }
-    }, { threshold: 0.35 });
-    io.observe(term);
-
-    function runTerminal() {
-      let li = 0;
-
-      function runLine() {
-        if (li >= TERM_SCRIPT.length) {
-          const cursor = document.createElement("div");
-          cursor.innerHTML = '<span class="t-prompt">$</span> <span class="typed-caret">▌</span>';
-          term.appendChild(cursor);
-          return;
-        }
-        const step = TERM_SCRIPT[li++];
-        const line = document.createElement("div");
-        line.innerHTML = `<span class="t-prompt">$</span> <span class="t-cmd"></span>`;
-        term.appendChild(line);
-        const cmdSpan = line.querySelector(".t-cmd");
-        let ci = 0;
-
-        (function typeCmd() {
-          cmdSpan.textContent = step.cmd.slice(0, ++ci);
-          if (ci < step.cmd.length) {
-            setTimeout(typeCmd, 26);
-          } else {
-            setTimeout(() => {
-              const out = document.createElement("div");
-              out.innerHTML = step.out;
-              term.appendChild(out);
-              setTimeout(runLine, 260);
-            }, 140);
-          }
-        })();
-      }
-      runLine();
-    }
-  }
-
-  /* ── 5 · scroll: progress bar, nav state, active section ───── */
-
-  const progress = $("#scroll-progress");
-  const nav = $("#site-nav");
-  const navLinks = $$(".nav-links a");
-
-  function onScroll() {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    progress.style.width = `${max > 0 ? (window.scrollY / max) * 100 : 0}%`;
-    nav.classList.toggle("scrolled", window.scrollY > 12);
-  }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
-
-  const sectionIO = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          navLinks.forEach((a) =>
-            a.classList.toggle("active", a.dataset.section === e.target.id)
-          );
-        }
-      }
-    },
-    { rootMargin: "-38% 0px -55% 0px" }
-  );
-  ["about", "projects", "stack", "contact"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) sectionIO.observe(el);
-  });
-
-  /* ── 6 · reveal on scroll ──────────────────────────────────── */
+  /* ── 3 · reveal on scroll + affinities ──────────────────────── */
 
   if (REDUCED) {
     $$(".reveal").forEach((el) => el.classList.add("in"));
+    $$(".af").forEach((el) => el.classList.add("visible"));
   } else {
     const revealIO = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
             e.target.classList.add("in");
+            if (e.target.closest("#file")) {
+              $$(".af", e.target.closest("#file")).forEach((el) => el.classList.add("visible"));
+            }
             revealIO.unobserve(e.target);
           }
         }
@@ -212,7 +113,7 @@
     $$(".reveal").forEach((el) => revealIO.observe(el));
   }
 
-  /* ── 7 · hero stat counters ────────────────────────────────── */
+  /* ── 4 · hero stat counters ─────────────────────────────────── */
 
   function startCounters() {
     if (countersStarted) return;
@@ -232,7 +133,70 @@
     });
   }
 
-  /* ── 8 · ⌘K command palette ────────────────────────────────── */
+  /* ── 5 · nav state + active section ─────────────────────────── */
+
+  const nav = $("#site-nav");
+  const navLinks = $$(".nav-links a");
+
+  function onScroll() {
+    nav.classList.toggle("scrolled", window.scrollY > 12);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  const sectionIO = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          navLinks.forEach((a) =>
+            a.classList.toggle("active", a.dataset.section === e.target.id)
+          );
+        }
+      }
+    },
+    { rootMargin: "-38% 0px -55% 0px" }
+  );
+  ["file", "missions", "techniques", "summon"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) sectionIO.observe(el);
+  });
+
+  /* ── 6 · audio — pentatonic chimes ──────────────────────────── */
+
+  let audioCtx = null;
+  function playChime(mult = 1) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state !== "running") audioCtx.resume();
+      const notes = [220.0, 261.63, 293.66, 329.63, 392.0]; // A minor pentatonic
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(
+        notes[Math.floor(Math.random() * notes.length)] * mult,
+        audioCtx.currentTime
+      );
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.55);
+    } catch (e) {}
+  }
+
+  /* ── 7 · shadow mode easter egg ─────────────────────────────── */
+
+  let shadowTimer = null;
+  function shadowMode() {
+    playChime(0.5);
+    document.body.classList.add("shadow-mode");
+    clearTimeout(shadowTimer);
+    shadowTimer = setTimeout(() => document.body.classList.remove("shadow-mode"), 2400);
+  }
+
+  /* ── 8 · ⌘K command palette ─────────────────────────────────── */
 
   const cmdk = $("#cmdk");
   const cmdkInput = $("#cmdk-input");
@@ -240,15 +204,13 @@
   let cmdkOpen = false, selectedIndex = 0, filtered = [];
 
   const COMMANDS = [
-    { glyph: "→", label: "go: about", hint: "01", kw: "about story profile", run: () => scrollToSel("#about") },
-    { glyph: "→", label: "go: selected work", hint: "02", kw: "projects work portfolio builds", run: () => scrollToSel("#projects") },
-    { glyph: "→", label: "go: stack inventory", hint: "03", kw: "stack skills tech technologies", run: () => scrollToSel("#stack") },
-    { glyph: "→", label: "go: contact", hint: "04", kw: "contact email hello message", run: () => scrollToSel("#contact") },
-    { glyph: "$", label: "whoami", hint: "meta", kw: "whoami identity about user", run: () => scrollToSel("#about") },
-    { glyph: "$", label: "ls ./projects", hint: "meta", kw: "ls list projects dir", run: () => scrollToSel("#projects") },
+    { glyph: "→", label: "go: character file", hint: "01", kw: "about file origin identity whoami", run: () => scrollToSel("#file") },
+    { glyph: "→", label: "go: mission board", hint: "02", kw: "projects work missions missions list", run: () => scrollToSel("#missions") },
+    { glyph: "→", label: "go: technique scrolls", hint: "03", kw: "stack skills tech techniques scrolls", run: () => scrollToSel("#techniques") },
+    { glyph: "→", label: "go: the summon", hint: "04", kw: "contact email hello message summon", run: () => scrollToSel("#summon") },
     { glyph: "↗", label: "open github @SadhaSri697", hint: "ext", kw: "github repo code open source", run: () => window.open("https://github.com/SadhaSri697", "_blank") },
-    { glyph: "✉", label: "email jnanasadhasri.s@gmail.com", hint: "ext", kw: "email mail hello contact write", run: () => (location.href = "mailto:jnanasadhasri.s@gmail.com?subject=Hello%20SadhaSri") },
-    { glyph: "↑", label: "sudo hire-me", hint: "fun", kw: "hire job recruit offer sudo fun", run: () => (location.href = "mailto:jnanasadhasri.s@gmail.com?subject=%5Bhire%5D%20Let's%20talk%20—%20via%20sudo%20hire-me") },
+    { glyph: "✉", label: "summon by email", hint: "ext", kw: "email mail hello contact write", run: () => (location.href = "mailto:jnanasadhasri.s@gmail.com?subject=Summon%20—%20from%20your%20portfolio") },
+    { glyph: "影", label: "shadow mode", hint: "fun", kw: "shadow solo dark mode fun easter", run: () => shadowMode() },
     { glyph: "⌂", label: "back to top", hint: "nav", kw: "top home hero start up", run: () => scrollToSel("#hero") },
   ];
 
@@ -301,7 +263,6 @@
 
   $("#cmdk-open").addEventListener("click", openCmdk);
   cmdk.addEventListener("click", (e) => { if (e.target === cmdk) closeCmdk(); });
-
   cmdkInput.addEventListener("input", () => filterCommands(cmdkInput.value));
 
   window.addEventListener("keydown", (e) => {
@@ -329,17 +290,17 @@
     }
   });
 
-  /* ── 9 · misc ──────────────────────────────────────────────── */
+  /* ── 9 · misc + QA hooks ────────────────────────────────────── */
 
   $("#year").textContent = new Date().getFullYear();
 
-  if (PARAMS.has("flat")) { // screenshot hook: ?static=1&flat — normal section flow in a tall window
+  if (PARAMS.has("flat")) { // screenshot hook: ?static=1&flat
     const hero = document.getElementById("hero");
     if (hero) hero.style.minHeight = "760px";
   }
-  if (PARAMS.get("scroll")) { // screenshot hook: ?static=1&scroll=projects
+  if (PARAMS.get("scroll")) { // screenshot hook: ?static=1&scroll=missions
     const el = document.getElementById(PARAMS.get("scroll"));
     if (el) el.scrollIntoView();
   }
-  if (PARAMS.has("cmdk")) openCmdk(); // screenshot hook: ?static=1&cmdk=1
+  if (PARAMS.has("cmdk")) openCmdk();
 })();
