@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   S. SADHASRI — SHADOW ARC v7.0 "THE ARCANE ENGINEER"
-   app.js — boot · typed roles · counters · reveals · audio ·
-            shadow-mode ⌘K palette · QA hooks — vanilla JS
+   S. SADHASRI — THE FLOATING ISLES v8.0
+   app.js — boot · typed roles · counters · reveals · journey rail ·
+            audio · ⌘K course-plotter · QA hooks — vanilla JS
    ═══════════════════════════════════════════════════════════════ */
 
 (() => {
@@ -16,27 +16,27 @@
 
   if (PARAMS.has("static")) {
     document.documentElement.style.scrollBehavior = "auto";
-    document.documentElement.classList.add("static-render"); // freeze CSS animation for capture
+    document.documentElement.classList.add("static-render");
   }
 
   let countersStarted = false;
 
-  /* ── 1 · boot: releasing the seal ───────────────────────────── */
+  /* ── 1 · boot ───────────────────────────────────────────────── */
 
   const boot = $("#boot");
   const bootLines = $(".boot-lines", boot);
   const bootFill = $(".boot-bar-fill", boot);
 
   const BOOT_SCRIPT = [
-    "releasing the seal <hl>解</hl> .......... <ok>[ok]</ok>",
-    "loading shadow techniques .............. <ok>[ok]</ok>",
-    "summoning interface .................... <ok>[ok]</ok>",
-    "arc 01 — <hl>the awakening</hl>. welcome, visitor.",
+    "raising the isles from the sea ........ <ok>[ok]</ok>",
+    "charting the flight path .............. <ok>[ok]</ok>",
+    "lighting beacons · feeding waterfall .. <ok>[ok]</ok>",
+    "wind is fair — <hl>the journey begins</hl>.",
   ];
 
   function finishBoot() {
     boot.classList.add("done");
-    setTimeout(() => boot.remove(), 520);
+    setTimeout(() => boot.remove(), 540);
     startCounters();
   }
 
@@ -55,9 +55,9 @@
           .replace(/<\/hl>/g, "</span>");
         bootLines.appendChild(el);
         bootFill.style.width = `${((i + 1) / BOOT_SCRIPT.length) * 100}%`;
-      }, 140 + i * 190);
+      }, 140 + i * 200);
     });
-    setTimeout(finishBoot, 140 + BOOT_SCRIPT.length * 190 + 380);
+    setTimeout(finishBoot, 140 + BOOT_SCRIPT.length * 200 + 380);
     boot.addEventListener("click", finishBoot, { once: true });
   }
 
@@ -68,7 +68,7 @@
     "full-stack developer",
     "ml & data-science enthusiast",
     "agent-tooling builder",
-    "the arcane engineer",
+    "isles cartographer",
   ];
 
   if (REDUCED) {
@@ -90,7 +90,7 @@
     })();
   }
 
-  /* ── 3 · reveal on scroll + affinities ──────────────────────── */
+  /* ── 3 · reveals + affinities ───────────────────────────────── */
 
   if (REDUCED) {
     $$(".reveal").forEach((el) => el.classList.add("in"));
@@ -102,7 +102,7 @@
           if (e.isIntersecting) {
             e.target.classList.add("in");
             if (e.target.closest("#file")) {
-              $$(".af", e.target.closest("#file")).forEach((el) => el.classList.add("visible"));
+              $$("#file .af").forEach((el) => el.classList.add("visible"));
             }
             revealIO.unobserve(e.target);
           }
@@ -113,7 +113,7 @@
     $$(".reveal").forEach((el) => revealIO.observe(el));
   }
 
-  /* ── 4 · hero stat counters ─────────────────────────────────── */
+  /* ── 4 · counters ───────────────────────────────────────────── */
 
   function startCounters() {
     if (countersStarted) return;
@@ -133,42 +133,44 @@
     });
   }
 
-  /* ── 5 · nav state + active section ─────────────────────────── */
+  /* ── 5 · nav · journey rail · scroll cue ────────────────────── */
 
   const nav = $("#site-nav");
   const navLinks = $$(".nav-links a");
+  const journeyDot = $("#journey-dot");
+  const journeyItems = $$(".journey-stops li");
+  const scrollCue = $(".scroll-cue");
 
   function onScroll() {
     nav.classList.toggle("scrolled", window.scrollY > 12);
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const p = Math.min(1, window.scrollY / max);
+    if (journeyDot) journeyDot.style.top = `${p * 100}%`;
+    if (scrollCue) scrollCue.classList.toggle("hidden", window.scrollY > 200);
+
+    let nearest = 0, best = 1e9;
+    for (let i = 0; i < navLinks.length; i++) {
+      const el = document.querySelector(
+        `section[data-anchor="${navLinks[i].dataset.section}"], #${navLinks[i].dataset.section}`
+      );
+      if (!el) continue;
+      const d = Math.abs(el.offsetTop - window.scrollY);
+      if (d < best) { best = d; nearest = i; }
+    }
+    navLinks.forEach((a, i) => a.classList.toggle("active", i === nearest));
+    journeyItems.forEach((li, i) => li.classList.toggle("near", i === nearest));
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  const sectionIO = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          navLinks.forEach((a) =>
-            a.classList.toggle("active", a.dataset.section === e.target.id)
-          );
-        }
-      }
-    },
-    { rootMargin: "-38% 0px -55% 0px" }
-  );
-  ["file", "missions", "techniques", "summon"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) sectionIO.observe(el);
-  });
-
-  /* ── 6 · audio — pentatonic chimes ──────────────────────────── */
+  /* ── 6 · audio — wind-chime pentatonic ──────────────────────── */
 
   let audioCtx = null;
   function playChime(mult = 1) {
     try {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state !== "running") audioCtx.resume();
-      const notes = [220.0, 261.63, 293.66, 329.63, 392.0]; // A minor pentatonic
+      const notes = [220.0, 261.63, 293.66, 329.63, 392.0];
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = "triangle";
@@ -177,7 +179,7 @@
         audioCtx.currentTime
       );
       gain.gain.setValueAtTime(0, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.02);
+      gain.gain.linearRampToValueAtTime(0.045, audioCtx.currentTime + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -186,38 +188,40 @@
     } catch (e) {}
   }
 
-  /* ── 7 · shadow mode easter egg ─────────────────────────────── */
-
-  let shadowTimer = null;
-  function shadowMode() {
-    playChime(0.5);
-    document.body.classList.add("shadow-mode");
-    clearTimeout(shadowTimer);
-    shadowTimer = setTimeout(() => document.body.classList.remove("shadow-mode"), 2400);
-  }
-
-  /* ── 8 · ⌘K command palette ─────────────────────────────────── */
+  /* ── 7 · ⌘K course-plotter ──────────────────────────────────── */
 
   const cmdk = $("#cmdk");
   const cmdkInput = $("#cmdk-input");
   const cmdkList = $("#cmdk-list");
   let cmdkOpen = false, selectedIndex = 0, filtered = [];
 
-  const COMMANDS = [
-    { glyph: "→", label: "go: character file", hint: "01", kw: "about file origin identity whoami", run: () => scrollToSel("#file") },
-    { glyph: "→", label: "go: mission board", hint: "02", kw: "projects work missions missions list", run: () => scrollToSel("#missions") },
-    { glyph: "→", label: "go: technique scrolls", hint: "03", kw: "stack skills tech techniques scrolls", run: () => scrollToSel("#techniques") },
-    { glyph: "→", label: "go: the summon", hint: "04", kw: "contact email hello message summon", run: () => scrollToSel("#summon") },
-    { glyph: "↗", label: "open github @SadhaSri697", hint: "ext", kw: "github repo code open source", run: () => window.open("https://github.com/SadhaSri697", "_blank") },
-    { glyph: "✉", label: "summon by email", hint: "ext", kw: "email mail hello contact write", run: () => (location.href = "mailto:jnanasadhasri.s@gmail.com?subject=Summon%20—%20from%20your%20portfolio") },
-    { glyph: "影", label: "shadow mode", hint: "fun", kw: "shadow solo dark mode fun easter", run: () => shadowMode() },
-    { glyph: "⌂", label: "back to top", hint: "nav", kw: "top home hero start up", run: () => scrollToSel("#hero") },
-  ];
-
   function scrollToSel(sel) {
     const el = $(sel);
     if (el) el.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "start" });
   }
+
+  function sparkleStorm() {
+    if (REDUCED || !window.__fx) return;
+    let n = 0;
+    const iv = setInterval(() => {
+      window.__fx.burst(
+        window.innerWidth * (0.2 + Math.random() * 0.6),
+        window.innerHeight * (0.25 + Math.random() * 0.5)
+      );
+      if (++n >= 9) clearInterval(iv);
+    }, 130);
+  }
+
+  const COMMANDS = [
+    { glyph: "▲", label: "fly: the hero isle", hint: "00", kw: "top home hero prologue start isle", run: () => scrollToSel("#prologue") },
+    { glyph: "▲", label: "fly: the observatory", hint: "01", kw: "about file observatory identity whoami", run: () => scrollToSel("#file") },
+    { glyph: "▲", label: "fly: the archipelago", hint: "02", kw: "projects work missions archipelago", run: () => scrollToSel("#missions") },
+    { glyph: "▲", label: "fly: the constellation", hint: "03", kw: "stack skills constellation techniques", run: () => scrollToSel("#techniques") },
+    { glyph: "▲", label: "fly: the portal", hint: "04", kw: "contact email summon portal door", run: () => scrollToSel("#summon") },
+    { glyph: "✉", label: "email jnanasadhasri.s@gmail.com", hint: "ext", kw: "email mail hello contact write", run: () => (location.href = "mailto:jnanasadhasri.s@gmail.com?subject=Across%20the%20isles") },
+    { glyph: "↗", label: "open github @SadhaSri697", hint: "ext", kw: "github repo code open source", run: () => window.open("https://github.com/SadhaSri697", "_blank") },
+    { glyph: "✦", label: "sparkle storm", hint: "fun", kw: "sparkle storm fun burst magic", run: () => sparkleStorm() },
+  ];
 
   function renderList() {
     cmdkList.innerHTML = "";
@@ -290,17 +294,14 @@
     }
   });
 
-  /* ── 9 · misc + QA hooks ────────────────────────────────────── */
+  /* ── 8 · misc + QA hooks ────────────────────────────────────── */
 
   $("#year").textContent = new Date().getFullYear();
 
-  if (PARAMS.has("flat")) { // screenshot hook: ?static=1&flat
-    const hero = document.getElementById("hero");
-    if (hero) hero.style.minHeight = "760px";
+  if (PARAMS.has("at")) { // screenshot hook: ?at=0..4 jumps to a station
+    const idx = Math.min(4, Math.max(0, parseInt(PARAMS.get("at"), 10)));
+    const ids = ["prologue", "file", "missions", "techniques", "summon"];
+    const el = document.getElementById(ids[idx]);
+    if (el) setTimeout(() => el.scrollIntoView(), 60);
   }
-  if (PARAMS.get("scroll")) { // screenshot hook: ?static=1&scroll=missions
-    const el = document.getElementById(PARAMS.get("scroll"));
-    if (el) el.scrollIntoView();
-  }
-  if (PARAMS.has("cmdk")) openCmdk();
 })();

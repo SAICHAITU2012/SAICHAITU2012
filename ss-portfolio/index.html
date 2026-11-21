@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S. SADHASRI — THE ARCANE ENGINEER // Shadow Arc</title>
-  <meta name="description" content="S. SadhaSri — full-stack engineer & ML enthusiast. An anime-inspired developer portfolio: missions, techniques and summons. 100% open source.">
-  <meta name="theme-color" content="#05060f">
-  <meta property="og:title" content="S. SADHASRI — THE ARCANE ENGINEER">
-  <meta property="og:description" content="Shadow Arc · mission board · technique scrolls · one summoning circle. Anime-inspired developer portfolio.">
+  <title>S. SADHASRI — THE FLOATING ISLES // An explorable 3D portfolio</title>
+  <meta name="description" content="S. SadhaSri — full-stack engineer & ML enthusiast. An explorable floating-island world: scroll to fly between islands, missions, a skill constellation and a portal. 100% open source.">
+  <meta name="theme-color" content="#0a0a18">
+  <meta property="og:title" content="S. SADHASRI — THE FLOATING ISLES">
+  <meta property="og:description" content="Scroll to fly through a procedural floating-island world. Missions, constellations, a portal. Built with Three.js — zero assets downloaded.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305060f'/%3E%3Ctext x='8' y='46' font-size='34' fill='%2367e8f9' font-family='serif'%3E影%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a18'/%3E%3Cpath d='M32 12 L52 44 L12 44 Z' fill='none' stroke='%2367e8f9' stroke-width='3'/%3E%3Ccircle cx='32' cy='36' r='6' fill='%2367e8f9'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
@@ -18,33 +18,52 @@
 </head>
 <body>
 
-  <!-- ══ boot: releasing the seal ══ -->
+  <!-- ══ boot ══ -->
   <div id="boot" aria-hidden="true">
     <div class="boot-inner">
-      <div class="boot-seal">解</div>
+      <div class="boot-sigil">
+        <svg viewBox="0 0 64 64">
+          <path d="M32 10 L54 48 L10 48 Z" fill="none" stroke="#67e8f9" stroke-width="2" class="boot-tri"/>
+          <circle cx="32" cy="36" r="5" fill="#67e8f9" class="boot-dot"/>
+        </svg>
+      </div>
       <div class="boot-lines"></div>
       <div class="boot-bar"><div class="boot-bar-fill"></div></div>
     </div>
   </div>
 
-  <!-- ══ fx canvas (embers · streaks · cursor · shockwaves) ══ -->
-  <canvas id="fx" aria-hidden="true"></canvas>
+  <!-- ══ the world ══ -->
+  <canvas id="world" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
 
   <a class="skip-link" href="#main">skip to content</a>
+
+  <!-- ══ journey rail ══ -->
+  <div class="journey" aria-hidden="true">
+    <div class="journey-line"><i id="journey-dot"></i></div>
+    <ul class="journey-stops mono">
+      <li data-station="0">isle</li>
+      <li data-station="1">observatory</li>
+      <li data-station="2">archipelago</li>
+      <li data-station="3">constellation</li>
+      <li data-station="4">portal</li>
+    </ul>
+  </div>
 
   <!-- ══ NAV ══ -->
   <header id="site-nav">
     <div class="nav-inner">
-      <a href="#hero" class="nav-logo" aria-label="home">
-        <span class="logo-mark">影</span>
+      <a href="#top" class="nav-logo" aria-label="home">
+        <span class="logo-glyph mono">▲</span>
         <span class="logo-name">S.SADHASRI</span>
-        <span class="logo-arc mono">/ shadow arc</span>
+        <span class="logo-arc mono">/ the floating isles</span>
       </a>
       <nav class="nav-links" aria-label="primary">
-        <a href="#file" data-section="file"><span class="nav-num">01</span>file</a>
-        <a href="#missions" data-section="missions"><span class="nav-num">02</span>missions</a>
-        <a href="#techniques" data-section="techniques"><span class="nav-num">03</span>techniques</a>
-        <a href="#summon" data-section="summon"><span class="nav-num">04</span>summon</a>
+        <a href="#prologue" data-section="prologue"><span class="nav-num">00</span>isle</a>
+        <a href="#file" data-section="file"><span class="nav-num">01</span>observatory</a>
+        <a href="#missions" data-section="missions"><span class="nav-num">02</span>archipelago</a>
+        <a href="#techniques" data-section="techniques"><span class="nav-num">03</span>constellation</a>
+        <a href="#summon" data-section="summon"><span class="nav-num">04</span>portal</a>
       </nav>
       <div class="nav-actions">
         <button id="cmdk-open" class="nav-cmdk" type="button" aria-label="open command palette">
@@ -55,387 +74,144 @@
     </div>
   </header>
 
-  <!-- side rails -->
-  <div class="side-rail rail-left" aria-hidden="true">
-    <a href="https://github.com/SadhaSri697" target="_blank" rel="noopener" title="github">gh</a>
-    <a href="mailto:jnanasadhasri.s@gmail.com" title="email">@</a>
-    <span class="rail-line"></span>
-  </div>
-  <div class="side-rail rail-right" aria-hidden="true">
-    <a class="rail-email mono" href="mailto:jnanasadhasri.s@gmail.com">jnanasadhasri.s@gmail.com</a>
-    <span class="rail-line"></span>
-  </div>
-
   <main id="main">
 
-    <!-- ══════════ PROLOGUE ══════════ -->
-    <section id="hero">
-      <div class="moon" aria-hidden="true"></div>
-
-      <!-- torii + watcher -->
-      <div class="hero-art" aria-hidden="true">
-        <svg class="torii" viewBox="0 0 320 400" preserveAspectRatio="xMidYMax meet">
-          <defs>
-            <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#67e8f9" stop-opacity="0"/>
-              <stop offset="0.5" stop-color="#67e8f9" stop-opacity="0.55"/>
-              <stop offset="1" stop-color="#67e8f9" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <g fill="#0a0d1c">
-            <rect x="18" y="34" width="284" height="16" rx="7"/>
-            <rect x="34" y="60" width="252" height="11" rx="5"/>
-            <rect x="150" y="71" width="20" height="26"/>
-            <rect x="58" y="71" width="17" height="329"/>
-            <rect x="245" y="71" width="17" height="329"/>
-            <rect x="8" y="26" width="304" height="10" rx="5"/>
-          </g>
-          <rect x="8" y="26" width="304" height="2" fill="url(#rim)"/>
-          <line x1="34" y1="60" x2="286" y2="60" stroke="url(#rim)" stroke-width="1.4"/>
-          <circle cx="105" cy="52" r="2.6" fill="#f5b84b" opacity="0.9"/>
-          <circle cx="215" cy="52" r="2.6" fill="#f5b84b" opacity="0.85"/>
-        </svg>
-
-        <!-- the watcher on the beam -->
-        <svg class="watcher" viewBox="0 0 60 74">
-          <g fill="#070912">
-            <path d="M30 8 c -9 0 -13 6 -13 12 c 0 5 3 9 13 9 c 10 0 13 -4 13 -9 c 0 -6 -4 -12 -13 -12 z"/>
-            <path d="M18 26 c -5 4 -7 12 -7 22 l 4 22 h 30 l 4 -22 c 0 -10 -2 -18 -7 -22 c -4 3 -8 4 -12 4 c -4 0 -8 -1 -12 -4 z"/>
-            <path d="M46 30 l 12 20 -4 3 -12 -18 z"/>
-          </g>
-          <g class="watcher-eyes">
-            <circle cx="25" cy="17" r="1.9" fill="#67e8f9"/>
-            <circle cx="35" cy="17" r="1.9" fill="#67e8f9"/>
-          </g>
-          <path class="watcher-scarf" d="M17 28 c -8 2 -12 8 -14 16 c 4 -3 9 -4 14 -4 z" fill="#e879f9" opacity="0.85"/>
-        </svg>
-      </div>
-
-      <div class="kana" aria-hidden="true">サドスリ — 影のエンジニア</div>
-
-      <div class="hero-inner">
-        <p class="overline mono reveal">ARC 01 <span class="slash">//</span> THE AWAKENING <span class="slash">/</span> 開</p>
+    <!-- ══ STATION 00 · PROLOGUE ══ -->
+    <section id="prologue" class="station">
+      <div class="panel hero-panel">
+        <p class="overline mono reveal">THE FLOATING ISLES <span class="sl">//</span> an explorable portfolio <span class="sl">/</span> 島</p>
         <h1 class="hero-name reveal" style="--d:.08s">S.&nbsp;SADHASRI</h1>
         <p class="hero-typed reveal mono" style="--d:.16s"><span class="typed-glyph">▶</span> <span id="typed">full-stack developer</span><span class="caret">_</span></p>
         <p class="hero-lede reveal" style="--d:.24s">
-          I forge fast, expressive web platforms, predictive ML pipelines, and automation
-          tooling for AI agents — from live AniList GraphQL apps to PM2.5 forecasting across
-          12 sensor stations. Everything shipped open source, from India.
+          Welcome to my sky. Scroll — the camera will carry you across the isles:
+          an observatory of who I am, an archipelago of everything I've shipped,
+          a constellation of what I know, and a portal at the end.
         </p>
         <div class="hero-ctas reveal" style="--d:.32s">
-          <a class="btn btn-primary mono" href="#missions">open mission board</a>
-          <a class="btn btn-ghost mono" href="#summon">summon me</a>
+          <a class="btn btn-primary mono" href="#file">begin the journey ↓</a>
+          <a class="btn btn-ghost mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github ↗</a>
         </div>
         <ul class="hero-stats reveal mono" style="--d:.4s">
           <li><span class="stat-n" data-count="13">0</span><span class="stat-l">public repos</span></li>
-          <li><span class="stat-n" data-count="6">0</span><span class="stat-l">missions cleared</span></li>
+          <li><span class="stat-n" data-count="6">0</span><span class="stat-l">missions shipped</span></li>
           <li><span class="stat-n" data-count="100" data-suffix="%">0</span><span class="stat-l">open source</span></li>
-          <li><span class="stat-n" data-count="4">0</span><span class="stat-l">affinities</span></li>
+          <li><span class="stat-n" data-count="5">0</span><span class="stat-l">isles to visit</span></li>
         </ul>
       </div>
-      <a class="scroll-cue mono" href="#file" aria-label="scroll to character file"><span>descend</span><span class="cue-line"></span></a>
+      <a class="scroll-cue mono" href="#file" aria-label="begin descent"><span>descend</span><span class="cue-line"></span></a>
     </section>
 
-    <!-- ══════════ 01 · CHARACTER FILE ══════════ -->
-    <section id="file" class="section">
-      <span class="ghost-kanji" aria-hidden="true">始</span>
-      <div class="section-head reveal">
-        <span class="section-num mono">01.</span>
-        <h2 class="section-title">character file&nbsp;<span class="title-dim mono">// 始 · the origin</span></h2>
-        <span class="section-rule"></span>
-      </div>
-
-      <div class="file-grid">
-        <div class="dossier reveal">
-          <div class="dossier-head">
-            <svg class="sigil" viewBox="0 0 44 44" aria-hidden="true">
-              <circle cx="22" cy="22" r="20" fill="none" stroke="#67e8f9" stroke-opacity="0.5"/>
-              <circle cx="22" cy="22" r="13" fill="none" stroke="#e879f9" stroke-opacity="0.45"/>
-              <circle cx="22" cy="22" r="5" fill="#67e8f9"/>
-              <path d="M22 2 v8 M22 34 v8 M2 22 h8 M34 22 h8" stroke="#67e8f9" stroke-opacity="0.35"/>
-            </svg>
-            <div>
-              <p class="dossier-name">S. SADHASRI</p>
-              <p class="dossier-class mono">class — THE ARCANE ENGINEER</p>
-            </div>
-          </div>
-          <p class="dossier-bio">
-            Developer &amp; creative engineer from India, walking the line between
-            <em>delightful interfaces</em> and <em>practical machine learning</em>. Code should
-            feel considered — intentional color, accessible type, interactions that respond
-            like living things.
-          </p>
-          <div class="affinities">
-            <p class="af-title mono">affinity chart</p>
-            <div class="af"><span class="af-label mono">web craft</span><span class="af-rank mono">S</span><div class="af-bar"><i style="--w:95%"></i></div></div>
-            <div class="af"><span class="af-label mono">creative direction</span><span class="af-rank mono">S</span><div class="af-bar"><i class="mag" style="--w:92%"></i></div></div>
-            <div class="af"><span class="af-label mono">ml &amp; data</span><span class="af-rank mono">A</span><div class="af-bar"><i style="--w:85%"></i></div></div>
-            <div class="af"><span class="af-label mono">systems</span><span class="af-rank mono">A−</span><div class="af-bar"><i class="mag" style="--w:80%"></i></div></div>
-          </div>
-          <p class="dossier-creed mono"><span class="creed-mark">//</span> curiosity is the fuel · empathy is the design · code is the technique</p>
-        </div>
-
-        <div class="tech-cards">
-          <div class="pillar-card reveal" style="--d:.05s">
-            <span class="pillar-glyph mono">&lt;/&gt;</span>
-            <h3>web craft</h3>
-            <p>Design-token systems, fluid typography, mobile-first layouts, GitHub Pages deployments with zero bloat.</p>
-          </div>
-          <div class="pillar-card reveal" style="--d:.1s">
-            <span class="pillar-glyph mono">∑</span>
-            <h3>ml pipelines</h3>
-            <p>Regression &amp; time-series feature engineering, statistical EDA on real-world datasets.</p>
-          </div>
-          <div class="pillar-card reveal" style="--d:.15s">
-            <span class="pillar-glyph mono">⇄</span>
-            <h3>apis &amp; cloud</h3>
-            <p>GraphQL &amp; REST integration, Firebase v11 real-time stores, FastAPI routes over SQLite.</p>
-          </div>
-          <div class="pillar-card reveal" style="--d:.2s">
-            <span class="pillar-glyph mono">⚙</span>
-            <h3>automation</h3>
-            <p>SKILL.md generators for coding agents, Telegram↔agent bridges, containerized dev setups.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ══ interlude: the crossing ══ -->
-    <div class="interlude" aria-hidden="true">
-      <svg viewBox="0 0 1600 90" preserveAspectRatio="xMidYMid slice">
-        <line x1="0" y1="72" x2="1600" y2="72" stroke="#1a2136" stroke-width="2"/>
-        <g fill="#0a0d1a">
-          <rect x="1180" y="52" width="90" height="20" rx="2"/>
-          <rect x="1216" y="24" width="18" height="28"/>
-        </g>
-        <g class="walker-g">
-          <g fill="#070914">
-            <circle cx="0" cy="-26" r="7"/>
-            <path d="M-6 -19 c -4 3 -5 9 -5 16 l 3 12 h 8 l 3 -12 c 0 -7 -1 -13 -5 -16 z"/>
-            <rect x="-8" y="6" width="4" height="10" rx="2"/>
-            <rect x="3" y="6" width="4" height="10" rx="2"/>
-            <path d="M6 -14 l 10 6 -2 4 -9 -5 z"/>
-          </g>
-          <circle cx="2" cy="-27" r="1.4" fill="#67e8f9" opacity="0.8"/>
-        </g>
-      </svg>
-      <div class="wisp"></div>
-    </div>
-
-    <!-- ══════════ 02 · MISSION BOARD ══════════ -->
-    <section id="missions" class="section">
-      <span class="ghost-kanji" aria-hidden="true">依</span>
-      <div class="section-head reveal">
-        <span class="section-num mono">02.</span>
-        <h2 class="section-title">mission board&nbsp;<span class="title-dim mono">// 依頼 · accepted contracts</span></h2>
-        <span class="section-rule"></span>
-      </div>
-
-      <div class="mission-grid">
-        <article class="mission-card reveal">
-          <div class="mission-top mono">
-            <span class="rank rank-s">S</span>
-            <span class="mission-id">MS-01 · web platform</span>
-            <span class="mission-live"><i class="live-dot"></i>live</span>
-          </div>
-          <h3 class="mission-title">My Anime Shelf</h3>
-          <p class="mission-desc">Anime discovery, rating &amp; tracking platform — live AniList GraphQL search, Firebase v11 auth, and a hand-rolled design-token system.</p>
-          <ul class="mission-tags mono"><li>vanilla js</li><li>graphql</li><li>firebase v11</li></ul>
-          <div class="mission-links mono">
-            <a href="https://sadhasri697.github.io/My-Anime-Self/" target="_blank" rel="noopener">demo ↗</a>
-            <a href="https://github.com/SadhaSri697/My-Anime-Self" target="_blank" rel="noopener">repo ↗</a>
-          </div>
-        </article>
-
-        <article class="mission-card reveal" style="--d:.06s">
-          <div class="mission-top mono">
-            <span class="rank rank-a">A</span>
-            <span class="mission-id">MS-02 · ml forecasting</span>
-          </div>
-          <h3 class="mission-title">Air Quality Trend Predictor</h3>
-          <p class="mission-desc">Multi-horizon PM2.5 forecasting across 12 Beijing monitoring stations with time-series meteorological feature engineering.</p>
-          <ul class="mission-tags mono"><li>python</li><li>scikit-learn</li><li>pandas</li></ul>
-          <div class="mission-links mono">
-            <a href="https://github.com/SadhaSri697/Air-Quality-Trend-Predictor" target="_blank" rel="noopener">repo ↗</a>
-          </div>
-        </article>
-
-        <article class="mission-card reveal" style="--d:.12s">
-          <div class="mission-top mono">
-            <span class="rank rank-a">A</span>
-            <span class="mission-id">MS-03 · data science</span>
-          </div>
-          <h3 class="mission-title">Student Depression Analysis</h3>
-          <p class="mission-desc">Analytical system probing demographic, academic &amp; lifestyle signals behind student well-being, wrapped in an interactive CLI.</p>
-          <ul class="mission-tags mono"><li>python</li><li>eda</li><li>cli</li></ul>
-          <div class="mission-links mono">
-            <a href="https://github.com/SadhaSri697/Student-Depression-Analysis" target="_blank" rel="noopener">repo ↗</a>
-          </div>
-        </article>
-
-        <article class="mission-card reveal" style="--d:.18s">
-          <div class="mission-top mono">
-            <span class="rank rank-s">S</span>
-            <span class="mission-id">MS-04 · ai tooling</span>
-          </div>
-          <h3 class="mission-title">web2skill (w2s)</h3>
-          <p class="mission-desc">Compiles web interfaces into hierarchical SKILL.md specs, so coding agents get operational context with zero manual prompt-writing.</p>
-          <ul class="mission-tags mono"><li>python</li><li>scraping</li><li>ai agents</li></ul>
-          <div class="mission-links mono">
-            <a href="https://github.com/SadhaSri697/Webtoskill" target="_blank" rel="noopener">repo ↗</a>
-          </div>
-        </article>
-
-        <article class="mission-card reveal" style="--d:.24s">
-          <div class="mission-top mono">
-            <span class="rank rank-s">S</span>
-            <span class="mission-id">MS-05 · automation</span>
-          </div>
-          <h3 class="mission-title">Telegram Bridge for Pi Sessions</h3>
-          <p class="mission-desc">Multi-session Telegram ↔ agent bridge with bidirectional token streaming and isolated concurrent bot processes.</p>
-          <ul class="mission-tags mono"><li>typescript</li><li>bot api</li><li>async ipc</li></ul>
-          <div class="mission-links mono">
-            <a href="https://github.com/SadhaSri697/Pi-telegram-main" target="_blank" rel="noopener">repo ↗</a>
-          </div>
-        </article>
-
-        <article class="mission-card reveal" style="--d:.3s">
-          <div class="mission-top mono">
-            <span class="rank rank-b">B</span>
-            <span class="mission-id">MS-06 · algorithms</span>
-          </div>
-          <h3 class="mission-title">Python Programs Suite</h3>
-          <p class="mission-desc">Curated algorithms &amp; data-structures playground — recursion, string science, sorting paradigms — in idiomatic Python.</p>
-          <ul class="mission-tags mono"><li>python</li><li>dsa</li></ul>
-          <div class="mission-links mono">
-            <a href="https://github.com/SadhaSri697/Python-programs" target="_blank" rel="noopener">repo ↗</a>
-          </div>
-        </article>
-      </div>
-
-      <p class="archive-note reveal mono">
-        <a href="https://github.com/SadhaSri697?tab=repositories" target="_blank" rel="noopener">view the full archive → github.com/SadhaSri697</a>
-      </p>
-    </section>
-
-
-    <!-- ══ interlude: the spirit fox ══ -->
-    <div class="interlude" aria-hidden="true">
-      <div class="fox">
-        <svg viewBox="0 0 120 60" class="fox-body">
-          <g fill="none" stroke="#67e8f9" stroke-opacity="0.75" stroke-width="2">
-            <path d="M10 40 q 20 -18 44 -12 q 26 6 46 -2"/>
-            <path d="M100 26 l 12 -8 M100 26 l 14 0 M100 26 l 8 12"/>
-          </g>
-          <circle cx="10" cy="40" r="5" fill="#67e8f9" fill-opacity="0.85"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- ══════════ 03 · TECHNIQUE SCROLLS ══════════ -->
-    <section id="techniques" class="section">
-      <span class="ghost-kanji" aria-hidden="true">術</span>
-      <div class="section-head reveal">
-        <span class="section-num mono">03.</span>
-        <h2 class="section-title">technique scrolls&nbsp;<span class="title-dim mono">// 術 · the arsenal</span></h2>
-        <span class="section-rule"></span>
-      </div>
-
-      <div class="scroll-grid">
-        <div class="scroll-panel reveal">
-          <h3 class="mono"><span class="scroll-num">壱</span> languages</h3>
-          <ul class="chips mono">
-            <li>python</li><li>javascript es6+</li><li>typescript</li><li>java</li>
-            <li>c++</li><li>c#</li><li>sql</li><li>html5 / css3</li>
-          </ul>
-        </div>
-        <div class="scroll-panel reveal" style="--d:.06s">
-          <h3 class="mono"><span class="scroll-num">弐</span> frontend &amp; design</h3>
-          <ul class="chips mono">
-            <li>react</li><li>d3.js</li><li>design tokens</li><li>responsive systems</li><li>micro-interactions</li>
-          </ul>
-        </div>
-        <div class="scroll-panel reveal" style="--d:.12s">
-          <h3 class="mono"><span class="scroll-num">参</span> backend &amp; data</h3>
-          <ul class="chips mono">
-            <li>fastapi</li><li>graphql</li><li>firebase v11</li><li>sqlite</li><li>kafka</li>
-            <li>scikit-learn</li><li>pandas</li><li>numpy</li>
-          </ul>
-        </div>
-        <div class="scroll-panel reveal" style="--d:.18s">
-          <h3 class="mono"><span class="scroll-num">肆</span> infra &amp; tooling</h3>
-          <ul class="chips mono">
-            <li>git &amp; github</li><li>docker</li><li>debian linux</li><li>postman</li><li>jupyter</li>
-          </ul>
-        </div>
-      </div>
-      <p class="exploring reveal mono">
-        <span class="creed-mark">//</span> currently training → systems engineering · cloud deployment pipelines · agent architectures
-      </p>
-    </section>
-
-
-    <!-- ══ interlude: rising lanterns ══ -->
-    <div class="interlude" aria-hidden="true">
-      <div class="lantern l1"></div>
-      <div class="lantern l2"></div>
-      <div class="lantern l3"></div>
-      <div class="lantern l4"></div>
-    </div>
-
-    <!-- ══════════ 04 · THE SUMMON ══════════ -->
-    <section id="summon" class="section">
-      <span class="ghost-kanji" aria-hidden="true">召</span>
-      <div class="section-head reveal">
-        <span class="section-num mono">04.</span>
-        <h2 class="section-title">the summon&nbsp;<span class="title-dim mono">// 召喚 · open channel</span></h2>
-        <span class="section-rule"></span>
-      </div>
-
-      <div class="summon-inner">
-        <div class="companion" aria-hidden="true">
-          <svg viewBox="0 0 40 46">
-            <g fill="#0b0f1e">
-              <ellipse cx="20" cy="26" rx="13" ry="15"/>
-              <circle cx="20" cy="12" r="9"/>
-              <path d="M12 8 l 3 -7 3 6 z M28 8 l -3 -7 -3 6 z"/>
-              <path d="M20 40 q 10 -2 12 -12" fill="none" stroke="#0b0f1e" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <g class="companion-eyes">
-              <circle cx="16" cy="12" r="2" fill="#67e8f9"/>
-              <circle cx="24" cy="12" r="2" fill="#67e8f9"/>
-            </g>
-            <circle cx="20" cy="18" r="2.4" fill="#e879f9"/>
-          </svg>
-        </div>
-        <div class="summon-circle" aria-hidden="true">
-          <svg viewBox="0 0 220 220">
-            <circle cx="110" cy="110" r="104" fill="none" stroke="#67e8f9" stroke-opacity="0.4" stroke-dasharray="10 7" class="ring-a"/>
-            <circle cx="110" cy="110" r="80" fill="none" stroke="#e879f9" stroke-opacity="0.3" stroke-dasharray="3 8" class="ring-b"/>
-            <circle cx="110" cy="110" r="46" fill="none" stroke="#67e8f9" stroke-opacity="0.55"/>
-            <path d="M110 96 l 12 5 v 9 c 0 10 -6 15 -12 18 c -6 -3 -12 -8 -12 -18 v -9 z" fill="none" stroke="#67e8f9" stroke-opacity="0.7"/>
-          </svg>
-        </div>
-        <p class="summon-kicker reveal mono">&gt; the summoning circle is active — response time: fast</p>
-        <h3 class="summon-heading reveal" style="--d:.08s">Let's forge something<br><span class="grad-text">worth remembering.</span></h3>
-        <p class="summon-lede reveal" style="--d:.16s">
-          My inbox is open — collaborations, open source, interesting problems,
-          or just to talk shop about agents and air-quality sensors.
+    <!-- ══ STATION 01 · OBSERVATORY ══ -->
+    <section id="file" class="station">
+      <div class="panel reveal">
+        <div class="panel-head mono"><span class="pn">01</span> the observatory <span class="sl">//</span> 建物</div>
+        <h2 class="panel-title disp">WHO FLIES THESE SKIES</h2>
+        <p class="panel-body">
+          I'm <strong>S. SadhaSri</strong> — a full-stack engineer &amp; ML enthusiast from India.
+          I forge fast, expressive web platforms, predictive pipelines, and automation tooling
+          for AI agents. The observatory ahead holds my dossier and affinities —
+          everything measured, nothing claimed.
         </p>
-        <div class="hero-ctas summon-ctas reveal" style="--d:.24s">
-          <a class="btn btn-primary mono" href="mailto:jnanasadhasri.s@gmail.com?subject=Summon%20—%20from%20your%20portfolio">cast summon ↗</a>
+        <div class="affinities">
+          <div class="af"><span class="af-label mono">web craft</span><span class="af-rank mono">S</span><div class="af-bar"><i style="--w:95%"></i></div></div>
+          <div class="af"><span class="af-label mono">creative direction</span><span class="af-rank mono">S</span><div class="af-bar"><i class="mag" style="--w:92%"></i></div></div>
+          <div class="af"><span class="af-label mono">ml &amp; data</span><span class="af-rank mono">A</span><div class="af-bar"><i style="--w:85%"></i></div></div>
+          <div class="af"><span class="af-label mono">systems</span><span class="af-rank mono">A−</span><div class="af-bar"><i class="mag" style="--w:80%"></i></div></div>
+        </div>
+        <p class="panel-foot mono"><span class="creed-mark">//</span> curiosity is the wind · empathy is the compass · code is the vessel</p>
+      </div>
+      <div class="side-facts reveal mono">
+        <p><b>13</b> public repos</p>
+        <p><b>100%</b> open source</p>
+        <p><b>6</b> missions shipped</p>
+        <p><b>∞</b> curiosity</p>
+      </div>
+    </section>
+
+    <!-- ══ STATION 02 · ARCHIPELAGO ══ -->
+    <section id="missions" class="station wide">
+      <div class="panel wide-panel reveal">
+        <div class="panel-head mono"><span class="pn">02</span> the archipelago <span class="sl">//</span> 諸島</div>
+        <h2 class="panel-title disp">SIX MISSIONS. SIX ISLANDS.</h2>
+        <p class="panel-body">Each island below carries one shipped mission — the camera glides across them as you read. Beacons mark what's live.</p>
+      </div>
+
+      <div class="mission-row">
+        <article class="m-card reveal">
+          <div class="m-top mono"><span class="rank rank-s">S</span><span class="m-id">MS-01 · web platform</span><span class="m-live"><i class="live-dot"></i>live</span></div>
+          <h3 class="m-title">My Anime Shelf</h3>
+          <p class="m-desc">Anime discovery &amp; tracking — AniList GraphQL search, Firebase v11 auth, hand-rolled design tokens.</p>
+          <div class="m-links mono"><a href="https://sadhasri697.github.io/My-Anime-Self/" target="_blank" rel="noopener">demo ↗</a><a href="https://github.com/SadhaSri697/My-Anime-Self" target="_blank" rel="noopener">repo ↗</a></div>
+        </article>
+        <article class="m-card reveal" style="--d:.06s">
+          <div class="m-top mono"><span class="rank rank-a">A</span><span class="m-id">MS-02 · ml forecasting</span></div>
+          <h3 class="m-title">Air Quality Predictor</h3>
+          <p class="m-desc">Multi-horizon PM2.5 forecasting across 12 Beijing stations with time-series meteorological feature engineering.</p>
+          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Air-Quality-Trend-Predictor" target="_blank" rel="noopener">repo ↗</a></div>
+        </article>
+        <article class="m-card reveal" style="--d:.12s">
+          <div class="m-top mono"><span class="rank rank-a">A</span><span class="m-id">MS-03 · data science</span></div>
+          <h3 class="m-title">Student Depression Analysis</h3>
+          <p class="m-desc">EDA system probing demographic, academic &amp; lifestyle signals behind student well-being — interactive CLI.</p>
+          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Student-Depression-Analysis" target="_blank" rel="noopener">repo ↗</a></div>
+        </article>
+        <article class="m-card reveal" style="--d:.18s">
+          <div class="m-top mono"><span class="rank rank-s">S</span><span class="m-id">MS-04 · ai tooling</span></div>
+          <h3 class="m-title">web2skill (w2s)</h3>
+          <p class="m-desc">Compiles web interfaces into hierarchical SKILL.md specs so coding agents get context with zero prompt-writing.</p>
+          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Webtoskill" target="_blank" rel="noopener">repo ↗</a></div>
+        </article>
+        <article class="m-card reveal" style="--d:.24s">
+          <div class="m-top mono"><span class="rank rank-s">S</span><span class="m-id">MS-05 · automation</span></div>
+          <h3 class="m-title">Telegram Bridge for Pi</h3>
+          <p class="m-desc">Multi-session Telegram ↔ agent bridge — bidirectional token streaming, isolated concurrent bot processes.</p>
+          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Pi-telegram-main" target="_blank" rel="noopener">repo ↗</a></div>
+        </article>
+        <article class="m-card reveal" style="--d:.3s">
+          <div class="m-top mono"><span class="rank rank-b">B</span><span class="m-id">MS-06 · algorithms</span></div>
+          <h3 class="m-title">Python Programs Suite</h3>
+          <p class="m-desc">Curated algorithms &amp; data-structures playground — recursion, string science, sorting — in idiomatic Python.</p>
+          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Python-programs" target="_blank" rel="noopener">repo ↗</a></div>
+        </article>
+      </div>
+      <p class="archive-note reveal mono"><a href="https://github.com/SadhaSri697?tab=repositories" target="_blank" rel="noopener">the full archive → github.com/SadhaSri697</a></p>
+    </section>
+
+    <!-- ══ STATION 03 · CONSTELLATION ══ -->
+    <section id="techniques" class="station">
+      <div class="panel reveal">
+        <div class="panel-head mono"><span class="pn">03</span> the constellation <span class="sl">//</span> 星座</div>
+        <h2 class="panel-title disp">WHAT THE STARS KNOW</h2>
+        <p class="panel-body">Look up as we fly — every technique I wield is a star in the constellations above. Four skies, four disciplines.</p>
+        <div class="const-groups mono">
+          <div class="cg"><p class="cg-t">壱 · languages</p><ul class="chips"><li>python</li><li>javascript es6+</li><li>typescript</li><li>java</li><li>c++</li><li>sql</li></ul></div>
+          <div class="cg"><p class="cg-t">弐 · frontend</p><ul class="chips"><li>react</li><li>d3.js</li><li>design tokens</li><li>responsive systems</li></ul></div>
+          <div class="cg"><p class="cg-t">参 · backend &amp; data</p><ul class="chips"><li>fastapi</li><li>graphql</li><li>firebase v11</li><li>sqlite</li><li>scikit-learn</li><li>pandas</li></ul></div>
+          <div class="cg"><p class="cg-t">肆 · infra &amp; tooling</p><ul class="chips"><li>git &amp; github</li><li>docker</li><li>debian linux</li><li>postman</li><li>jupyter</li></ul></div>
+        </div>
+        <p class="panel-foot mono"><span class="creed-mark">//</span> currently charting → systems engineering · cloud pipelines · agent architectures</p>
+      </div>
+    </section>
+
+    <!-- ══ STATION 04 · PORTAL ══ -->
+    <section id="summon" class="station">
+      <div class="panel reveal summon-panel">
+        <div class="panel-head mono"><span class="pn">04</span> the portal <span class="sl">//</span> 門</div>
+        <h2 class="panel-title disp">ONE DOOR. OPEN.</h2>
+        <p class="panel-body">The flight ends here — the portal hums with everything we crossed. Step through: my inbox is open for collaborations, open source, and interesting problems.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary mono" href="mailto:jnanasadhasri.s@gmail.com?subject=Across%20the%20isles%20—%20from%20your%20portfolio">step through ↗</a>
           <a class="btn btn-ghost mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github.com/SadhaSri697 ↗</a>
         </div>
+        <p class="panel-foot mono"><span class="creed-mark">//</span> response time: fast — the portal is always lit</p>
       </div>
     </section>
 
-    <!-- ══════════ FOOTER ══════════ -->
     <footer id="site-footer">
       <div class="footer-inner mono">
-        <p>© <span id="year">2026</span> S. SADHASRI — designed as an opening sequence</p>
-        <p class="footer-mid">vanilla html · css · js · canvas — zero frameworks</p>
-        <p>shadow arc · v7.5 multiverse · press <span class="cmdk-key">⌘</span><span class="cmdk-key">K</span></p>
+        <p>© <span id="year">2026</span> S. SADHASRI — a world built from primitives, no assets downloaded</p>
+        <p class="footer-mid">three.js · vanilla js · zero frameworks · procedural everything</p>
+        <p>v8.0 · press <span class="cmdk-key">⌘</span><span class="cmdk-key">K</span></p>
       </div>
     </footer>
   </main>
@@ -445,7 +221,7 @@
     <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="command palette">
       <div class="cmdk-input-row">
         <span class="mono cmdk-prompt">▶</span>
-        <input id="cmdk-input" class="mono" type="text" placeholder="cast a command…" autocomplete="off" spellcheck="false">
+        <input id="cmdk-input" class="mono" type="text" placeholder="plot a course…" autocomplete="off" spellcheck="false">
         <span class="mono cmdk-esc">esc</span>
       </div>
       <ul id="cmdk-list" class="mono"></ul>
@@ -453,6 +229,7 @@
   </div>
 
   <script src="app.js"></script>
-  <script src="scene.js"></script>
+  <script src="three.min.js"></script>
+  <script src="world.js"></script>
 </body>
 </html>
