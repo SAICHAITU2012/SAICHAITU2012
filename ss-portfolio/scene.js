@@ -55,18 +55,19 @@
     white: makeGlow(255, 255, 255),
   };
 
-  /* ── twilight sky + stars (cached) ──────────────────────────── */
+  /* ── multiverse: per-section atmospheres, interpolated by scroll ── */
 
-  let skyGrad = null;
-  let stars = [];
+  const THEMES = {
+    hero:      { top: [6, 7, 20],    mid: [10, 10, 28],   bot: [27, 16, 48],  w: [0.62, 0.2, 0.18] },
+    file:      { top: [9, 6, 24],    mid: [16, 10, 38],   bot: [30, 14, 62],  w: [0.3, 0.62, 0.08] },
+    missions:  { top: [16, 7, 16],   mid: [26, 11, 24],   bot: [48, 18, 30],  w: [0.18, 0.14, 0.68] },
+    techniques:{ top: [5, 12, 22],   mid: [8, 20, 38],    bot: [12, 30, 56],  w: [0.72, 0.14, 0.14] },
+    summon:    { top: [10, 6, 26],   mid: [20, 12, 52],   bot: [36, 20, 80],  w: [0.4, 0.45, 0.15] },
+  };
+  const THEME_ORDER = ["hero", "file", "missions", "techniques", "summon"];
+  let sectionMarks = [];
 
   function makeSky() {
-    skyGrad = ctx.createLinearGradient(0, 0, 0, H);
-    skyGrad.addColorStop(0, "#060714");
-    skyGrad.addColorStop(0.45, "#0a0a1c");
-    skyGrad.addColorStop(0.75, "#140f26");
-    skyGrad.addColorStop(1, "#1b1030");
-
     const count = isSmall() ? 60 : 110;
     stars = Array.from({ length: count }, () => ({
       x: Math.random() * W,
@@ -76,6 +77,43 @@
       s: 0.6 + Math.random() * 1.6,
       base: 0.2 + Math.random() * 0.45,
     }));
+    computeMarks();
+  }
+
+  function computeMarks() {
+    sectionMarks = THEME_ORDER.map((id) => {
+      const el = document.getElementById(id);
+      if (!el) return { y: 0 };
+      const r = el.getBoundingClientRect();
+      return { y: r.top + window.scrollY + r.height * 0.45 };
+    });
+  }
+
+  const lerp = (a, b, f) => a + (b - a) * f;
+  const lerp3 = (a, b, f) => [lerp(a[0], b[0], f), lerp(a[1], b[1], f), lerp(a[2], b[2], f)];
+
+  function currentTheme() {
+    const pos = window.scrollY + H * 0.42;
+    for (let i = 0; i < sectionMarks.length - 1; i++) {
+      if (pos >= sectionMarks[i].y && pos < sectionMarks[i + 1].y) {
+        const f = Math.min(1, Math.max(0, (pos - sectionMarks[i].y) / (sectionMarks[i + 1].y - sectionMarks[i].y)));
+        const a = THEMES[THEME_ORDER[i]], b = THEMES[THEME_ORDER[i + 1]];
+        const e = f * f * (3 - 2 * f); // smoothstep
+        return {
+          top: lerp3(a.top, b.top, e), mid: lerp3(a.mid, b.mid, e), bot: lerp3(a.bot, b.bot, e),
+          w: lerp3(a.w, b.w, e), i, e,
+        };
+      }
+    }
+    return { top: THEMES.hero.top, mid: THEMES.hero.mid, bot: THEMES.hero.bot, w: THEMES.hero.w, i: 0, e: 0 };
+  }
+
+  function skyGradient(th) {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, `rgb(${th.top.map(Math.round).join(",")})`);
+    g.addColorStop(0.45, `rgb(${th.mid.map(Math.round).join(",")})`);
+    g.addColorStop(1, `rgb(${th.bot.map(Math.round).join(",")})`);
+    return g;
   }
 
   /* ── rising embers ──────────────────────────────────────────── */
@@ -83,8 +121,27 @@
   const EMBER_TYPES = ["cyan", "mag", "ember"];
   let embers = [];
 
-  function spawnEmber(init) {
-    const type = EMBER_TYPES[Math.floor(Math.random() * (Math.random() < 0.55 ? 1 : 3))];
+  let emberWeights = THEMES.hero.w;
+  function spawnEmber(init, x, y, fast) {
+    const roll = Math.random();
+    let type = "cyan";
+    if (roll < emberWeights[0]) type = "cyan";
+    else if (roll < emberWeights[0] + emberWeights[1]) type = "mag";
+    else type = "ember";
+    if (x !== undefined) {
+      return {
+        x: x + (Math.random() - 0.5) * 90,
+        y: (y !== undefined ? y : H) + 8,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: -(0.5 + Math.random() * (fast ? 1.1 : 0.5)),
+        size: 2 + Math.random() * 3.6,
+        life: 1,
+        decay: fast ? 0.006 + Math.random() * 0.006 : 0.0014 + Math.random() * 0.0024,
+        swayP: Math.random() * Math.PI * 2,
+        swayS: 0.7 + Math.random() * 1.3,
+        type,
+      };
+    }
     return {
       x: Math.random() * W,
       y: init ? Math.random() * H : H + 12,
@@ -167,8 +224,10 @@
     clock.last = now;
     const t = now / 1000;
 
-    // sky
-    ctx.fillStyle = skyGrad;
+    // sky — multiverse atmosphere
+    const th = currentTheme();
+    emberWeights = th.w;
+    ctx.fillStyle = skyGradient(th);
     ctx.fillRect(0, 0, W, H);
 
     // stars
@@ -280,6 +339,19 @@
   }
 
   let renderer_frame = 0;
+
+  // cursed-energy aura when hovering mission cards
+  window.__fx = {
+    aura(x, y) {
+      for (let i = 0; i < 7; i++) embers.push(spawnEmber(false, x, y, true));
+    },
+  };
+  document.querySelectorAll(".mission-card").forEach((card) => {
+    card.addEventListener("pointerenter", () => {
+      const r = card.getBoundingClientRect();
+      window.__fx.aura(r.left + Math.random() * r.width, r.top + window.scrollY + 6);
+    });
+  });
 
   window.addEventListener("resize", () => {
     resize();
