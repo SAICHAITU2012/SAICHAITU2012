@@ -18,6 +18,9 @@
   const canvas = document.getElementById("world");
   if (!canvas || !window.THREE) {
     document.documentElement.classList.add("no-world");
+    window.__noWorld = true; // app.js reads this after scripts settle
+    document.documentElement.classList.remove("intro-pending");
+    document.documentElement.classList.add("intro-done");
     return;
   }
 
@@ -59,12 +62,29 @@
     if (!renderer.getContext()) throw new Error("no context");
   } catch (err) {
     document.documentElement.classList.add("no-world");
+    window.__noWorld = true; // app.js reads this after scripts settle
+    document.documentElement.classList.remove("intro-pending");
+    document.documentElement.classList.add("intro-done");
     return;
   }
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 1.75));
-  renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setClearColor(0x04070f, 1);
+
+  /* ── adaptive quality — hold the frame rate by trading pixels ────────
+     The sea/sky shaders are fill-rate heavy. Every 2 s the loop judges
+     the real frame rate and steps the render resolution down (floor 1.0)
+     or back up toward the device cap, so weak GPUs glide instead of
+     stuttering at a fixed ratio. Exposed as window.__world.quality. */
+  const DPR_CAP = MOBILE ? 1.3 : 1.75;
+  const QUALITY_FLOOR = 1.0;
+  let quality = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+  let qFrames = 0, qTime = 0, qGood = 0, qWarm = 0;
+
+  function applyQuality() {
+    renderer.setPixelRatio(Math.min(quality, window.devicePixelRatio || 1, DPR_CAP));
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+  }
+  applyQuality();
 
   const scene = new T.Scene();
   scene.fog = new T.FogExp2(0x08131c, 0.004);
@@ -76,9 +96,50 @@
   );
   const clock = new T.Clock();
 
+  /* ── cinematic intro: high establishing shot → water-level arrival ──
+     starts when app.js lifts the boot overlay ("lantern:begin"),
+     skips on any input, deep links (?at=) and reduced-motion skip it. */
+  const INTRO = {
+    fromPos: new T.Vector3(-9, 34, 128),
+    fromLook: new T.Vector3(-26, 16, -150),
+    dur: 2.6,
+    t: REDUCED || params.has("at") ? 1 : 0,
+    started: REDUCED || params.has("at") ? true : false,
+    done: REDUCED || params.has("at") ? true : false,
+  };
+  window.addEventListener("lantern:begin", () => {
+    INTRO.started = true;
+  });
+  // watchdog: start once the boot overlay has left the DOM (app.js owns it),
+  // hard-capped at 10s so a broken boot can never strand the camera.
+  let watchdogTries = 0;
+  const watchdog = setInterval(() => {
+    watchdogTries++;
+    if (!document.getElementById("boot") || watchdogTries > 40) {
+      clearInterval(watchdog);
+      INTRO.started = true;
+    }
+  }, 250);
+  ["pointerdown", "wheel", "touchstart", "keydown"].forEach((ev) => {
+    window.addEventListener(
+      ev,
+      (e) => {
+        if (ev === "keydown" && (e.metaKey || e.ctrlKey)) return; // ⌘K during intro shouldn't skip
+        if (!INTRO.done) {
+          INTRO.started = true;
+          INTRO.t = 1;
+        }
+      },
+      { passive: true }
+    );
+  });
+
   canvas.addEventListener("webglcontextlost", (e) => {
     e.preventDefault();
     document.documentElement.classList.add("no-world");
+    window.__noWorld = true; // app.js reads this after scripts settle
+    document.documentElement.classList.remove("intro-pending");
+    document.documentElement.classList.add("intro-done");
   });
 
   /* ── palette ──────────────────────────────────────────────────────── */
@@ -1094,6 +1155,13 @@
     camPos.x += mouseEX * 1.1 * sway;
     camPos.y += -mouseEY * 0.7 * sway;
 
+    // cinematic intro blend: high wide shot eases down to the arrival pose
+    if (!INTRO.done) {
+      const e = 1 - Math.pow(1 - INTRO.t, 4); // easeOutQuart
+      camPos.lerpVectors(INTRO.fromPos, camPos, e);
+      camLook.lerpVectors(INTRO.fromLook, camLook, e);
+    }
+
     camera.position.copy(camPos);
     camLook.x += mouseEX * 2.6 * sway;
     camLook.y += -mouseEY * 1.8 * sway;
@@ -1116,10 +1184,41 @@
   }
 
   function frame() {
-    const dt = Math.min(clock.getDelta(), 0.05);
+    const rawDt = clock.getDelta();
+    const dt = Math.min(rawDt, 0.05);
     elapsed += dt;
 
+    // adaptive-quality meter — real wall-clock frames per second
+    qFrames++; qTime += rawDt;
+    if (qTime >= 2) {
+      const fps = qFrames / qTime;
+      qFrames = 0; qTime = 0;
+      const cap = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+      if (qWarm < 2) {
+        qWarm++; // first windows after load: shader warm-up, don't judge
+      } else if (fps < 40 && quality > QUALITY_FLOOR) {
+        quality = Math.max(QUALITY_FLOOR, quality - 0.25);
+        applyQuality();
+        qGood = 0;
+      } else if (fps > 57 && quality < cap && ++qGood >= 2) {
+        quality = Math.min(cap, quality + 0.25);
+        applyQuality();
+        qGood = 0;
+      } else if (fps <= 57) {
+        qGood = 0;
+      }
+    }
+
     // ease the scroll value so the flight never snaps
+    if (!INTRO.done && INTRO.started) {
+      INTRO.t = Math.min(1, INTRO.t + dt / INTRO.dur);
+      if (INTRO.t >= 1) {
+        INTRO.done = true;
+        document.documentElement.classList.remove("intro-pending");
+        document.documentElement.classList.add("intro-done");
+      }
+      target = 0; // hold the arrival pose until the descent lands
+    }
     progress += (target - progress) * (1 - Math.pow(0.001, dt));
     station = clamp(Math.round(progress * (STOPS.length - 1)), 0, STOPS.length - 1);
 
@@ -1191,8 +1290,7 @@
     const h = window.innerHeight;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 1.75));
-    renderer.setSize(w, h, false);
+    applyQuality();
     measureStations();
     readScroll();
     if (REDUCED) renderOnce();
@@ -1252,6 +1350,9 @@
   Object.defineProperties(world, {
     station: { get: () => station },
     progress: { get: () => progress },
+    introDone: { get: () => INTRO.done },
+    introT: { get: () => INTRO.t },
+    quality: { get: () => quality },
   });
   window.__world = world;
 

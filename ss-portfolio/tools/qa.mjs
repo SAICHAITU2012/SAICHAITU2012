@@ -34,6 +34,7 @@ const settle = arg("settle", "null");
 const settleMs = Number(arg("settle-ms", "25000"));
 const scale = Number(arg("scale", "1"));
 const port = Number(arg("port", String(9300 + Math.floor(Math.random() * 400))));
+const noWebGL = arg("no-webgl", null) !== null;
 
 const profile = await mkdtemp(join(tmpdir(), "lantern-qa-"));
 
@@ -56,6 +57,7 @@ const chrome = spawn(
     "--disable-backgrounding-occluded-windows",
     "--disable-renderer-backgrounding",
     "--disable-features=CalculateNativeWinOcclusion",
+    ...(noWebGL ? ["--disable-webgl", "--disable-webgl2"] : []),
     "about:blank",
   ],
   { stdio: "ignore" }
@@ -117,6 +119,11 @@ await S("Runtime.enable");
 await S("Log.enable");
 await S("Network.enable");
 await S("Emulation.setFocusEmulationEnabled", { enabled: true });
+if (arg("reduced-motion", null) !== null) {
+  await S("Emulation.setEmulatedMedia", {
+    features: [{ name: "prefers-reduced-motion", value: "reduce" }],
+  });
+}
 await S("Emulation.setDeviceMetricsOverride", {
   width,
   height,

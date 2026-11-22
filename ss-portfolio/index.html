@@ -14,7 +14,15 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304070f'/%3E%3Cpath d='M32 14v6M24 22h16l3 18H21zM27 40h10v10H27z' fill='none' stroke='%23f3b673' stroke-width='2.4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='31' r='4.5' fill='%23ffd9a3'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Sora:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP:wght@300&display=swap" rel="stylesheet">
+  <!-- fonts load async so no render is ever blocked waiting on them — the
+       system fallbacks paint first and the webfonts swap in. The JP family
+       is subset to exactly the 13 glyphs this site uses (a few KB instead
+       of full JP slices): 参台団壱岸座弐星海灯肆船門 -->
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Sora:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300&text=%E5%8F%82%E5%8F%B0%E5%9B%A3%E5%A3%B1%E5%B2%B8%E5%BA%A7%E5%BC%90%E6%98%9F%E6%B5%B7%E7%81%AF%E8%82%86%E8%88%B9%E9%96%80&display=swap">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Sora:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP:wght@300&display=swap">
+  </noscript>
   <link rel="stylesheet" href="style.css">
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -22,16 +30,14 @@
 
   <!-- ══ boot ══ -->
   <div id="boot" aria-hidden="true">
+    <div class="boot-kanji" lang="ja">灯</div>
     <div class="boot-inner">
-      <div class="boot-sigil">
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <path d="M24 6v5M17 13h14l2.5 15h-19zM20.5 28h7v9h-7z" fill="none" stroke="#f3b673" stroke-width="1.4" stroke-linejoin="round"/>
-          <circle cx="24" cy="21" r="3" fill="#ffd9a3"/>
-        </svg>
-      </div>
+      <p class="boot-over mono">the lantern sea <span class="rule">//</span> <span lang="ja">灯海</span></p>
+      <canvas id="boot-fx" width="340" height="340"></canvas>
       <p class="boot-line mono" id="boot-line">lighting the lanterns</p>
       <div class="boot-bar"><i></i></div>
     </div>
+    <p class="boot-brand mono">S. SadhaSri <span class="rule">//</span> the night ocean of a machine that never sleeps</p>
   </div>
 
   <!-- ══ the world ══ -->
@@ -51,11 +57,11 @@
   <!-- ══ journey rail ══ -->
   <nav class="journey" aria-label="stations">
     <ul>
-      <li><a href="#shore" data-station="0"><span class="j-num mono">00</span><span class="j-name">shore</span><span class="j-jp">岸</span></a></li>
-      <li><a href="#beacon" data-station="1"><span class="j-num mono">01</span><span class="j-name">beacon</span><span class="j-jp">灯台</span></a></li>
-      <li><a href="#fleet" data-station="2"><span class="j-num mono">02</span><span class="j-name">fleet</span><span class="j-jp">船団</span></a></li>
-      <li><a href="#chart" data-station="3"><span class="j-num mono">03</span><span class="j-name">chart</span><span class="j-jp">星座</span></a></li>
-      <li><a href="#gate" data-station="4"><span class="j-num mono">04</span><span class="j-name">gate</span><span class="j-jp">門</span></a></li>
+      <li><a href="#shore" data-station="0"><span class="j-num mono">00</span><span class="j-name">shore</span><span class="j-jp" lang="ja">岸</span></a></li>
+      <li><a href="#beacon" data-station="1"><span class="j-num mono">01</span><span class="j-name">beacon</span><span class="j-jp" lang="ja">灯台</span></a></li>
+      <li><a href="#fleet" data-station="2"><span class="j-num mono">02</span><span class="j-name">fleet</span><span class="j-jp" lang="ja">船団</span></a></li>
+      <li><a href="#chart" data-station="3"><span class="j-num mono">03</span><span class="j-name">chart</span><span class="j-jp" lang="ja">星座</span></a></li>
+      <li><a href="#gate" data-station="4"><span class="j-num mono">04</span><span class="j-name">gate</span><span class="j-jp" lang="ja">門</span></a></li>
     </ul>
   </nav>
 
@@ -68,6 +74,12 @@
       </a>
       <span class="nav-world mono">/ the lantern sea</span>
       <div class="nav-right">
+        <button id="sound-toggle" class="nav-tgl mono" type="button" aria-pressed="false" title="ambient sound — waves, a slow pad and lantern chimes">
+          <span class="tgl-glyph" aria-hidden="true">♪</span><span class="tgl-text">sound</span>
+        </button>
+        <button id="boxes-toggle" class="nav-tgl mono" type="button" aria-pressed="false" title="show the golden-edged panels (classic look)">
+          <span class="tgl-glyph" aria-hidden="true">▢</span><span class="tgl-text">boxes</span>
+        </button>
         <button id="cmdk-open" class="cmdk-btn mono" type="button" aria-label="open command palette">
           <span>⌘</span><span>K</span>
         </button>
@@ -81,7 +93,7 @@
     <!-- ══ 00 · THE SHORE ══ -->
     <section id="shore" class="station" data-station="0">
       <div class="panel panel-hero">
-        <p class="overline mono">the lantern sea <span class="rule">//</span> an explorable portfolio <span class="jp">灯海</span></p>
+        <p class="overline mono">the lantern sea <span class="rule">//</span> an explorable portfolio <span class="jp" lang="ja">灯海</span></p>
         <h1 class="hero-name">S.&nbsp;SadhaSri</h1>
         <p class="hero-role mono"><span class="caret-mark">▸</span> <span id="typed">full-stack developer</span><i class="caret" aria-hidden="true"></i></p>
         <p class="lede">
@@ -105,7 +117,7 @@
     <!-- ══ 01 · THE BEACON ══ -->
     <section id="beacon" class="station station-right" data-station="1">
       <div class="panel">
-        <p class="station-head mono"><span class="s-num">01</span> the beacon <span class="rule">//</span> <span class="jp">灯台</span></p>
+        <p class="station-head mono"><span class="s-num">01</span> the beacon <span class="rule">//</span> <span class="jp" lang="ja">灯台</span></p>
         <h2 class="display">Who keeps<br>the lights</h2>
         <p class="body">
           I'm <strong>S. SadhaSri</strong> — a full-stack developer and ML explorer.
@@ -158,7 +170,7 @@
     <section id="fleet" class="station station-fleet" data-station="2">
       <div class="fleet-inner">
         <div class="panel">
-        <p class="station-head mono"><span class="s-num">02</span> the fleet <span class="rule">//</span> <span class="jp">船団</span></p>
+        <p class="station-head mono"><span class="s-num">02</span> the fleet <span class="rule">//</span> <span class="jp" lang="ja">船団</span></p>
         <h2 class="display">Six lights<br>on the water</h2>
         <p class="body">
           Every berth below is something that actually runs. Hover a berth and its
@@ -257,7 +269,7 @@
     <!-- ══ 03 · THE STAR CHART ══ -->
     <section id="chart" class="station station-right" data-station="3">
       <div class="panel">
-        <p class="station-head mono"><span class="s-num">03</span> the star chart <span class="rule">//</span> <span class="jp">星座</span></p>
+        <p class="station-head mono"><span class="s-num">03</span> the star chart <span class="rule">//</span> <span class="jp" lang="ja">星座</span></p>
         <h2 class="display">What the<br>stars know</h2>
         <p class="body">
           No proficiency bars — I'd be making the numbers up. Four constellations,
@@ -291,7 +303,7 @@
     <!-- ══ 04 · THE GATE ══ -->
     <section id="gate" class="station" data-station="4">
       <div class="panel">
-        <p class="station-head mono"><span class="s-num">04</span> the gate <span class="rule">//</span> <span class="jp">門</span></p>
+        <p class="station-head mono"><span class="s-num">04</span> the gate <span class="rule">//</span> <span class="jp" lang="ja">門</span></p>
         <h2 class="display">The gate<br>is open</h2>
         <p class="body">
           The water ends here. If you're building something with agents, data or
@@ -313,6 +325,7 @@
       <div class="footer-inner mono">
         <p>© <span id="year">2026</span> S. SADHASRI</p>
         <p class="footer-mid">the lantern sea · every surface procedural</p>
+        <p class="footer-music">music · “floating cities” — <a href="https://incompetech.com/" target="_blank" rel="noopener">kevin macLeod</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">cc-by 4.0</a></p>
         <p>three.js · vanilla js · v10.0 · <span class="kbd">⌘</span><span class="kbd">K</span></p>
       </div>
     </footer>
