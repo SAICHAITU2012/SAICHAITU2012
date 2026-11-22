@@ -385,6 +385,10 @@ main {
 /* ── stations ─────────────────────────────────────────────────────── */
 
 .station {
+  scroll-margin-top: 1.5rem;
+}
+
+.station {
   position: relative;
   min-height: 100vh;
   display: flex;
@@ -1017,6 +1021,14 @@ main {
   border: 1px solid var(--hair);
   border-radius: 3px;
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65);
+  animation: berth-in 0.32s var(--ease);
+}
+
+@keyframes berth-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.988);
+  }
 }
 
 .berth-close {

@@ -191,7 +191,7 @@
           // moon: a hard disc, a tight halo, a broad breath
           float md = max(dot(d, normalize(uMoonDir)), 0.0);
           col += uMoonColor * pow(md, 1500.0) * 1.55;
-          col += uMoonColor * pow(md, 55.0) * 0.1;
+          col += uMoonColor * pow(md, 55.0) * (0.09 + 0.03 * sin(uTime * 0.4));
           col += uMoonColor * pow(md, 6.0) * 0.03;
 
           // a faint cold glow where the gate sits on the horizon
@@ -488,11 +488,14 @@
       g.add(rib);
     }
 
-    // three warm window slits, low on the tower
+    // three warm window slits, low on the tower — they flicker softly
+    const winMats = [];
     for (let i = 0; i < 3; i++) {
+      const wMat = new T.MeshBasicMaterial({ color: 0xffc98a, transparent: true, opacity: 0.55 });
+      winMats.push({ m: wMat, p: i * 1.7 });
       const w = new T.Mesh(
         new T.PlaneGeometry(0.5, 2.6),
-        new T.MeshBasicMaterial({ color: 0xffc98a, transparent: true, opacity: 0.55 })
+        wMat
       );
       const a = 0.7 + i * 0.35;
       w.position.set(Math.cos(a) * 4.1, 9 + i * 4.5, Math.sin(a) * 4.1);
@@ -605,6 +608,7 @@
     scene.add(beamGroup);
     world.beamMat = beamMat;
 
+    world.winMats = winMats;
     scene.add(g);
 
     // the beacon's reflection on the water
@@ -670,9 +674,10 @@
 
       const s = streak(6 * f.scale, 42 * f.scale, f.colour, 0.24);
       s.position.set(f.pos[0], 0.075, f.pos[1] + 20 * f.scale);
+      var streakMat = s.material, streakBase = 0.24;
 
       scene.add(g);
-      lanterns.push({ group: g, light, halo, base: 3.9, phase: rnd() * Math.PI * 2, id: f.id, data: f });
+      lanterns.push({ group: g, light, halo, base: 3.9, phase: rnd() * Math.PI * 2, id: f.id, data: f, streakMat, streakBase });
     });
 
     // distant lights, no geometry — pure depth
@@ -729,6 +734,7 @@
   ];
 
   const chartParts = []; // constellation materials, faded in at station 03
+  const chartGroups = [];
 
   (function buildConstellations() {
     CONSTELLATIONS.forEach((c) => {
@@ -794,11 +800,15 @@
 
     const ring2Mat = new T.MeshBasicMaterial({ color: 0x6fc6d4, transparent: true, opacity: 0 });
     gateParts.push({ m: ring2Mat, base: 0.55 });
-    g.add(new T.Mesh(new T.TorusGeometry(GATE.r - 3.4, 0.32, 6, 120), ring2Mat));
+    const ringInner = new T.Mesh(new T.TorusGeometry(GATE.r - 3.4, 0.32, 6, 120), ring2Mat);
+    g.add(ringInner);
+    world.gateRingInner = ringInner;
 
     const ring3Mat = new T.MeshBasicMaterial({ color: 0x6fc6d4, transparent: true, opacity: 0 });
     gateParts.push({ m: ring3Mat, base: 0.3 });
-    g.add(new T.Mesh(new T.TorusGeometry(GATE.r + 5.2, 0.14, 6, 120), ring3Mat));
+    const ringOuter = new T.Mesh(new T.TorusGeometry(GATE.r + 5.2, 0.14, 6, 120), ring3Mat);
+    g.add(ringOuter);
+    world.gateRingOuter = ringOuter;
 
     // the surface of the gate
     const discMat = new T.ShaderMaterial({
@@ -881,6 +891,50 @@
     const s = streak(34, 190, 0x9fe6f0, 0);
     s.position.set(GATE.x, 0.085, GATE.z + 95);
     gateParts.push({ u: s.material.uniforms.uOpacity, base: 0.22 });
+  })();
+
+  /* ── night clouds — slow silhouettes drifting through the moon glow ── */
+
+  const nightClouds = [];
+  (function buildNightClouds() {
+    // self-contained: this build must not depend on helpers defined later
+    const tex = (() => {
+      const cv = document.createElement("canvas");
+      const w = 256, h = 128;
+      cv.width = w; cv.height = h;
+      const x = cv.getContext("2d");
+      for (let i = 0; i < 12; i++) {
+        const cx = 30 + Math.random() * (w - 60);
+        const cy = 40 + Math.random() * (h - 80);
+        const rr = 20 + Math.random() * 42;
+        const grad = x.createRadialGradient(cx, cy, 0, cx, cy, rr);
+        grad.addColorStop(0, "rgba(10, 22, 30, 0.9)");
+        grad.addColorStop(0.6, "rgba(12, 26, 36, 0.5)");
+        grad.addColorStop(1, "rgba(12, 26, 36, 0)");
+        x.fillStyle = grad;
+        x.beginPath();
+        x.arc(cx, cy, rr, 0, Math.PI * 2);
+        x.fill();
+      }
+      const t = new T.CanvasTexture(cv);
+      t.needsUpdate = true;
+      return t;
+    })();
+    const N = MOBILE ? 7 : 14;
+    for (let i = 0; i < N; i++) {
+      const c = new THREE.Sprite(
+        new THREE.SpriteMaterial({ map: tex, color: 0x2a4450, transparent: true, opacity: 0.5, depthWrite: false, fog: false })
+      );
+      // cluster along the moon / gate side of the sky, far away
+      const a = -0.2 - Math.random() * 0.9;
+      const dist = 620 + Math.random() * 320;
+      c.position.set(Math.sin(a) * dist * 0.6, 120 + Math.random() * 160, -Math.abs(Math.cos(a)) * dist);
+      const sc = 220 + Math.random() * 260;
+      c.scale.set(sc, sc * 0.36, 1);
+      c.userData = { v: 6 + Math.random() * 10 };
+      scene.add(c);
+      nightClouds.push(c);
+    }
   })();
 
   /* ── drifting motes ───────────────────────────────────────────────── */
@@ -1085,9 +1139,23 @@
     if (world.gateMat) world.gateMat.uniforms.uTime.value = elapsed;
     streakUniforms.forEach((u) => (u.uTime.value = elapsed));
 
-    // the beam sweeps, the lanterns bob
+    // the beam sweeps, the lanterns bob, windows flicker
     beamGroup.rotation.y = 1.45 + elapsed * 0.14;
     if (world.beamMat) world.beamMat.uniforms.uTime.value = elapsed;
+    if (world.winMats) {
+      for (const w of world.winMats) {
+        w.m.opacity = 0.42 + 0.16 * Math.sin(elapsed * 2.1 + w.p) + 0.08 * Math.sin(elapsed * 7.3 + w.p * 3.0);
+      }
+    }
+    if (world.gateRingInner) world.gateRingInner.rotation.z = elapsed * 0.06;
+    if (world.gateRingOuter) world.gateRingOuter.rotation.z = -elapsed * 0.035;
+    chartGroups.forEach((g, i) => {
+      g.rotation.z = g.userData.baseZ + Math.sin(elapsed * 0.07 + i * 1.3) * 0.018;
+    });
+    for (const c of nightClouds) {
+      c.position.x += c.userData.v * dt;
+      if (c.position.x > 900) c.position.x = -900;
+    }
 
     // the gate only lights as you approach it
     updateGate(progress);
@@ -1168,7 +1236,10 @@
   /* ── public API ───────────────────────────────────────────────────── */
 
   world.highlight = (id) => {
-    lanterns.forEach((l) => (l.group.userData.hot = l.id === id));
+    lanterns.forEach((l) => {
+      l.group.userData.hot = l.id === id;
+      if (l.streakMat) l.streakMat.uniforms.uOpacity.value = l.streakBase * (l.id === id ? 2.3 : 1);
+    });
   };
   // QA aid: where a world point lands on screen (px)
   world.project = (x, y, z) => {
