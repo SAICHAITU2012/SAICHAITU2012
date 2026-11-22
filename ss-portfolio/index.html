@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S. SADHASRI — THE FLOATING ISLES // An explorable 3D portfolio</title>
-  <meta name="description" content="S. SadhaSri — full-stack engineer & ML enthusiast. An explorable floating-island world: scroll to fly between islands, missions, a skill constellation and a portal. 100% open source.">
-  <meta name="theme-color" content="#0a0a18">
-  <meta property="og:title" content="S. SADHASRI — THE FLOATING ISLES">
-  <meta property="og:description" content="Scroll to fly through a procedural floating-island world. Missions, constellations, a portal. Built with Three.js — zero assets downloaded.">
+  <title>S. SADHASRI — THE LANTERN SEA // an explorable portfolio</title>
+  <meta name="description" content="S. SadhaSri — full-stack developer & ML explorer. A procedural night ocean you can sail through: a beacon, a fleet of six projects, a star chart and a gate. Three.js, vanilla JS, zero downloaded models.">
+  <meta name="theme-color" content="#04070f">
+  <meta property="og:title" content="S. SADHASRI — THE LANTERN SEA">
+  <meta property="og:description" content="The night ocean of a machine that never sleeps. Scroll to sail between a lighthouse, a fleet of lanterns, a star chart and a gate.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a18'/%3E%3Cpath d='M32 12 L52 44 L12 44 Z' fill='none' stroke='%2367e8f9' stroke-width='3'/%3E%3Ccircle cx='32' cy='36' r='6' fill='%2367e8f9'/%3E%3C/svg%3E">
+  <meta property="og:image" content="https://saichaitu2012.github.io/SAICHAITU2012/ss-portfolio/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2304070f'/%3E%3Cpath d='M32 14v6M24 22h16l3 18H21zM27 40h10v10H27z' fill='none' stroke='%23f3b673' stroke-width='2.4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='31' r='4.5' fill='%23ffd9a3'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Sora:wght@200;300;400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+JP:wght@300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -22,214 +24,328 @@
   <div id="boot" aria-hidden="true">
     <div class="boot-inner">
       <div class="boot-sigil">
-        <svg viewBox="0 0 64 64">
-          <path d="M32 10 L54 48 L10 48 Z" fill="none" stroke="#67e8f9" stroke-width="2" class="boot-tri"/>
-          <circle cx="32" cy="36" r="5" fill="#67e8f9" class="boot-dot"/>
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 6v5M17 13h14l2.5 15h-19zM20.5 28h7v9h-7z" fill="none" stroke="#f3b673" stroke-width="1.4" stroke-linejoin="round"/>
+          <circle cx="24" cy="21" r="3" fill="#ffd9a3"/>
         </svg>
       </div>
-      <div class="boot-lines"></div>
-      <div class="boot-bar"><div class="boot-bar-fill"></div></div>
+      <p class="boot-line mono" id="boot-line">lighting the lanterns</p>
+      <div class="boot-bar"><i></i></div>
     </div>
   </div>
 
   <!-- ══ the world ══ -->
   <canvas id="world" aria-hidden="true"></canvas>
-  <div class="vignette" aria-hidden="true"></div>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
   <a class="skip-link" href="#main">skip to content</a>
 
-  <!-- ══ journey rail ══ -->
-  <div class="journey" aria-hidden="true">
-    <div class="journey-line"><i id="journey-dot"></i></div>
-    <ul class="journey-stops mono">
-      <li data-station="0">isle</li>
-      <li data-station="1">observatory</li>
-      <li data-station="2">archipelago</li>
-      <li data-station="3">constellation</li>
-      <li data-station="4">portal</li>
-    </ul>
+  <!-- ══ station readout ══ -->
+  <div id="hud" class="hud mono" aria-hidden="true">
+    <span id="hud-num">00</span>
+    <span id="hud-name">the shore</span>
+    <i class="hud-bar"><b id="hud-fill"></b></i>
   </div>
 
-  <!-- ══ NAV ══ -->
+  <!-- ══ journey rail ══ -->
+  <nav class="journey" aria-label="stations">
+    <ul>
+      <li><a href="#shore" data-station="0"><span class="j-num mono">00</span><span class="j-name">shore</span><span class="j-jp">岸</span></a></li>
+      <li><a href="#beacon" data-station="1"><span class="j-num mono">01</span><span class="j-name">beacon</span><span class="j-jp">灯台</span></a></li>
+      <li><a href="#fleet" data-station="2"><span class="j-num mono">02</span><span class="j-name">fleet</span><span class="j-jp">船団</span></a></li>
+      <li><a href="#chart" data-station="3"><span class="j-num mono">03</span><span class="j-name">chart</span><span class="j-jp">星座</span></a></li>
+      <li><a href="#gate" data-station="4"><span class="j-num mono">04</span><span class="j-name">gate</span><span class="j-jp">門</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- ══ nav ══ -->
   <header id="site-nav">
     <div class="nav-inner">
-      <a href="#top" class="nav-logo" aria-label="home">
-        <span class="logo-glyph mono">▲</span>
-        <span class="logo-name">S.SADHASRI</span>
-        <span class="logo-arc mono">/ the floating isles</span>
+      <a href="#shore" class="nav-mark" aria-label="S. SadhaSri — home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3M8.5 7h7l1.4 8H7.1zM10 15h4v6h-4z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/><circle cx="12" cy="11" r="1.7" fill="currentColor"/></svg>
+        <span class="nav-name">S. SADHASRI</span>
       </a>
-      <nav class="nav-links" aria-label="primary">
-        <a href="#prologue" data-section="prologue"><span class="nav-num">00</span>isle</a>
-        <a href="#file" data-section="file"><span class="nav-num">01</span>observatory</a>
-        <a href="#missions" data-section="missions"><span class="nav-num">02</span>archipelago</a>
-        <a href="#techniques" data-section="techniques"><span class="nav-num">03</span>constellation</a>
-        <a href="#summon" data-section="summon"><span class="nav-num">04</span>portal</a>
-      </nav>
-      <div class="nav-actions">
-        <button id="cmdk-open" class="nav-cmdk" type="button" aria-label="open command palette">
-          <span class="cmdk-key">⌘</span><span class="cmdk-key">K</span>
+      <span class="nav-world mono">/ the lantern sea</span>
+      <div class="nav-right">
+        <button id="cmdk-open" class="cmdk-btn mono" type="button" aria-label="open command palette">
+          <span>⌘</span><span>K</span>
         </button>
-        <a class="nav-gh mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github&nbsp;↗</a>
+        <a class="nav-gh mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github <span aria-hidden="true">↗</span></a>
       </div>
     </div>
   </header>
 
   <main id="main">
 
-    <!-- ══ STATION 00 · PROLOGUE ══ -->
-    <section id="prologue" class="station">
-      <div class="panel hero-panel">
-        <p class="overline mono reveal">THE FLOATING ISLES <span class="sl">//</span> an explorable portfolio <span class="sl">/</span> 島</p>
-        <h1 class="hero-name reveal" style="--d:.08s">S.&nbsp;SADHASRI</h1>
-        <p class="hero-typed reveal mono" style="--d:.16s"><span class="typed-glyph">▶</span> <span id="typed">full-stack developer</span><span class="caret">_</span></p>
-        <p class="hero-lede reveal" style="--d:.24s">
-          Welcome to my sky. Scroll — the camera will carry you across the isles:
-          an observatory of who I am, an archipelago of everything I've shipped,
-          a constellation of what I know, and a portal at the end.
+    <!-- ══ 00 · THE SHORE ══ -->
+    <section id="shore" class="station" data-station="0">
+      <div class="panel panel-hero">
+        <p class="overline mono">the lantern sea <span class="rule">//</span> an explorable portfolio <span class="jp">灯海</span></p>
+        <h1 class="hero-name">S.&nbsp;SadhaSri</h1>
+        <p class="hero-role mono"><span class="caret-mark">▸</span> <span id="typed">full-stack developer</span><i class="caret" aria-hidden="true"></i></p>
+        <p class="lede">
+          This is the night ocean of a machine that never sleeps. Everything I've built
+          is a light left burning on the water — scroll, and we'll sail past all of it.
         </p>
-        <div class="hero-ctas reveal" style="--d:.32s">
-          <a class="btn btn-primary mono" href="#file">begin the journey ↓</a>
-          <a class="btn btn-ghost mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github ↗</a>
+        <div class="cta-row">
+          <a class="btn btn-solid" href="#beacon">set sail <span aria-hidden="true">↓</span></a>
+          <a class="btn btn-line" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github <span aria-hidden="true">↗</span></a>
         </div>
-        <ul class="hero-stats reveal mono" style="--d:.4s">
-          <li><span class="stat-n" data-count="13">0</span><span class="stat-l">public repos</span></li>
-          <li><span class="stat-n" data-count="6">0</span><span class="stat-l">missions shipped</span></li>
-          <li><span class="stat-n" data-count="100" data-suffix="%">0</span><span class="stat-l">open source</span></li>
-          <li><span class="stat-n" data-count="5">0</span><span class="stat-l">isles to visit</span></li>
+        <dl class="figures mono">
+          <div><dt>public repos</dt><dd data-count="13">13</dd></div>
+          <div><dt>lanterns in the fleet</dt><dd data-count="6">6</dd></div>
+          <div><dt>constellations</dt><dd data-count="4">4</dd></div>
+          <div><dt>ocean</dt><dd>1</dd></div>
+        </dl>
+      </div>
+      <a class="sail-cue mono" href="#beacon"><span>sail</span><i></i></a>
+    </section>
+
+    <!-- ══ 01 · THE BEACON ══ -->
+    <section id="beacon" class="station station-right" data-station="1">
+      <div class="panel">
+        <p class="station-head mono"><span class="s-num">01</span> the beacon <span class="rule">//</span> <span class="jp">灯台</span></p>
+        <h2 class="display">Who keeps<br>the lights</h2>
+        <p class="body">
+          I'm <strong>S. SadhaSri</strong> — a full-stack developer and ML explorer.
+          I build small, sharp things: web platforms that stay out of your way,
+          forecasting pipelines that show their work, and the scaffolding that lets
+          coding agents remember a project, read a page, or check their own claims.
+        </p>
+        <p class="body">
+          Most of what's on this water is agent tooling, because that's where the
+          interesting problems are right now — how a machine holds context, how it
+          proves something, how it stays honest.
+        </p>
+
+        <dl class="dossier mono">
+          <div><dt>writes</dt><dd>python · javascript · typescript · java · c/c++</dd></div>
+          <div><dt>ships with</dt><dd>vanilla es modules · react · fastapi · firebase · graphql</dd></div>
+          <div><dt>runs on</dt><dd>debian · docker · git · jupyter</dd></div>
+          <div><dt>learning</dt><dd>system architecture · cloud platforms · data structures &amp; algorithms</dd></div>
+          <div><dt>off-screen</dt><dd>anime, and collecting project ideas like stickers</dd></div>
+        </dl>
+
+        <ul class="lamps">
+          <li>
+            <span class="lamp-mark" aria-hidden="true"></span>
+            <span class="lamp-name">web craft</span>
+            <span class="lamp-note">vanilla ES modules, React, D3 — interfaces that get out of the way</span>
+          </li>
+          <li>
+            <span class="lamp-mark" aria-hidden="true"></span>
+            <span class="lamp-name">data &amp; ml</span>
+            <span class="lamp-note">forecasting and EDA pipelines that explain themselves</span>
+          </li>
+          <li>
+            <span class="lamp-mark" aria-hidden="true"></span>
+            <span class="lamp-name">agent tooling</span>
+            <span class="lamp-note">skills, memory and specs for coding agents</span>
+          </li>
+          <li>
+            <span class="lamp-mark" aria-hidden="true"></span>
+            <span class="lamp-name">systems</span>
+            <span class="lamp-note">TypeScript runtimes, CLIs, Debian, Docker</span>
+          </li>
+        </ul>
+
+        <p class="creed mono"><span class="rule">//</span> curiosity is the wind · empathy is the compass · code is the vessel</p>
+      </div>
+    </section>
+
+    <!-- ══ 02 · THE FLEET ══ -->
+    <section id="fleet" class="station station-fleet" data-station="2">
+      <div class="fleet-inner">
+        <div class="panel">
+        <p class="station-head mono"><span class="s-num">02</span> the fleet <span class="rule">//</span> <span class="jp">船団</span></p>
+        <h2 class="display">Six lights<br>on the water</h2>
+        <p class="body">
+          Every berth below is something that actually runs. Hover a berth and its
+          lantern answers; open one for what it does and what it's built from.
+        </p>
+      </div>
+
+      <ol class="fleet" id="fleet-list">
+        <li class="berth" data-project="w2s">
+          <span class="b-num mono">01</span>
+          <div class="b-main">
+            <h3 class="b-title">web2skill <span class="b-alias mono">w2s</span></h3>
+            <p class="b-desc">A skill that produces skills: point a coding agent at any site and it writes a structured reference of every element, state and edge case.</p>
+            <p class="b-tags mono">python · agent tooling</p>
+          </div>
+          <div class="b-acts">
+            <button class="b-open mono" type="button" data-open="w2s">open</button>
+            <a class="b-link mono" href="https://github.com/SadhaSri697/Webtoskill" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </li>
+        <li class="berth" data-project="pi">
+          <span class="b-num mono">02</span>
+          <div class="b-main">
+            <h3 class="b-title">PI Project Context</h3>
+            <p class="b-desc">Persistent, file-based project memory for coding agents. Each project gets a <code>.pi/</code> brain — no network, no service, no vendor.</p>
+            <p class="b-tags mono">typescript · node ≥18</p>
+          </div>
+          <div class="b-acts">
+            <button class="b-open mono" type="button" data-open="pi">open</button>
+            <a class="b-link mono" href="https://github.com/SadhaSri697/Pi-ppc-main" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </li>
+        <li class="berth" data-project="dna">
+          <span class="b-num mono">03</span>
+          <div class="b-main">
+            <h3 class="b-title">DNA Spec</h3>
+            <p class="b-desc">Replaces prompts with a hierarchical DNA: conversation → DNA → plan → tasks → code, so a system can be rebuilt from its minimum information.</p>
+            <p class="b-tags mono">javascript · spec-driven development</p>
+          </div>
+          <div class="b-acts">
+            <button class="b-open mono" type="button" data-open="dna">open</button>
+            <a class="b-link mono" href="https://github.com/SadhaSri697/Dna-spec-main" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </li>
+        <li class="berth" data-project="genui">
+          <span class="b-num mono">04</span>
+          <div class="b-main">
+            <h3 class="b-title">genui</h3>
+            <p class="b-desc">Generates beautiful, interactive web artifacts directly from CLI coding agents — instead of describing an interface, it renders one.</p>
+            <p class="b-tags mono">html · javascript · cli</p>
+          </div>
+          <div class="b-acts">
+            <button class="b-open mono" type="button" data-open="genui">open</button>
+            <a class="b-link mono" href="https://github.com/SadhaSri697/Genui-main" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </li>
+        <li class="berth" data-project="auto">
+          <span class="b-num mono">05</span>
+          <div class="b-main">
+            <h3 class="b-title">Auto-Breakthrough</h3>
+            <p class="b-desc">Given a falsifiable claim and a testable procedure, it drives an agent through a research loop — design, execute, analyse — and returns a verdict.</p>
+            <p class="b-tags mono">javascript · autonomous research</p>
+          </div>
+          <div class="b-acts">
+            <button class="b-open mono" type="button" data-open="auto">open</button>
+            <a class="b-link mono" href="https://github.com/SadhaSri697/Auto-breaktrough-main" target="_blank" rel="noopener">repo ↗</a>
+          </div>
+        </li>
+        <li class="berth" data-project="anime">
+          <span class="b-num mono">06</span>
+          <div class="b-main">
+            <h3 class="b-title">My Anime Shelf</h3>
+            <p class="b-desc">AniList GraphQL catalogue, debounced search and a Firebase-synced collection — built in vanilla ES modules, no framework.</p>
+            <p class="b-tags mono">javascript · graphql · firebase</p>
+          </div>
+          <div class="b-acts">
+            <button class="b-open mono" type="button" data-open="anime">open</button>
+            <a class="b-link mono" href="https://sadhasri697.github.io/My-Anime-Self/" target="_blank" rel="noopener">live ↗</a>
+          </div>
+        </li>
+      </ol>
+      </div>
+
+      <div class="archive">
+        <p class="archive-head mono"><span class="rule">//</span> five more hulls in the archive</p>
+        <ul class="archive-list mono">
+          <li><a href="https://github.com/SadhaSri697/Air-Quality-Trend-Predictor" target="_blank" rel="noopener"><b>Air Quality Trend Predictor</b><span>python · pm2.5 forecasting, 12 stations</span></a></li>
+          <li><a href="https://github.com/SadhaSri697/Student-Depression-Analysis" target="_blank" rel="noopener"><b>Student Depression Analysis</b><span>python · interactive CLI survey study</span></a></li>
+          <li><a href="https://github.com/SadhaSri697/Pi-telegram-main" target="_blank" rel="noopener"><b>Telegram Bridge for pi</b><span>typescript · streamed agent DMs</span></a></li>
+          <li><a href="https://github.com/SadhaSri697/Pi-extract-main" target="_blank" rel="noopener"><b>extract-pi-setup</b><span>javascript · package an agent setup</span></a></li>
+          <li><a href="https://github.com/SadhaSri697/Python-programs" target="_blank" rel="noopener"><b>Python programs</b><span>python · where the learning happened</span></a></li>
         </ul>
       </div>
-      <a class="scroll-cue mono" href="#file" aria-label="begin descent"><span>descend</span><span class="cue-line"></span></a>
     </section>
 
-    <!-- ══ STATION 01 · OBSERVATORY ══ -->
-    <section id="file" class="station">
-      <div class="panel reveal">
-        <div class="panel-head mono"><span class="pn">01</span> the observatory <span class="sl">//</span> 建物</div>
-        <h2 class="panel-title disp">WHO FLIES THESE SKIES</h2>
-        <p class="panel-body">
-          I'm <strong>S. SadhaSri</strong> — a full-stack engineer &amp; ML enthusiast from India.
-          I forge fast, expressive web platforms, predictive pipelines, and automation tooling
-          for AI agents. The observatory ahead holds my dossier and affinities —
-          everything measured, nothing claimed.
+    <!-- ══ 03 · THE STAR CHART ══ -->
+    <section id="chart" class="station station-right" data-station="3">
+      <div class="panel">
+        <p class="station-head mono"><span class="s-num">03</span> the star chart <span class="rule">//</span> <span class="jp">星座</span></p>
+        <h2 class="display">What the<br>stars know</h2>
+        <p class="body">
+          No proficiency bars — I'd be making the numbers up. Four constellations,
+          and an honest split between what I've shipped with and what's still
+          in the toolkit.
         </p>
-        <div class="affinities">
-          <div class="af"><span class="af-label mono">web craft</span><span class="af-rank mono">S</span><div class="af-bar"><i style="--w:95%"></i></div></div>
-          <div class="af"><span class="af-label mono">creative direction</span><span class="af-rank mono">S</span><div class="af-bar"><i class="mag" style="--w:92%"></i></div></div>
-          <div class="af"><span class="af-label mono">ml &amp; data</span><span class="af-rank mono">A</span><div class="af-bar"><i style="--w:85%"></i></div></div>
-          <div class="af"><span class="af-label mono">systems</span><span class="af-rank mono">A−</span><div class="af-bar"><i class="mag" style="--w:80%"></i></div></div>
+
+        <div class="chart-groups">
+          <div class="cg">
+            <p class="cg-title mono"><span class="cg-i">壱</span> shipped with</p>
+            <ul class="chips"><li>python</li><li>javascript es6+</li><li>typescript</li><li>html5 · css3</li><li>react</li><li>d3.js</li><li>fastapi</li><li>firebase</li><li>graphql</li><li>scikit-learn</li><li>pandas</li><li>sqlite</li></ul>
+          </div>
+          <div class="cg">
+            <p class="cg-title mono"><span class="cg-i">弐</span> in the toolkit</p>
+            <ul class="chips"><li>java</li><li>c</li><li>c++</li><li>c#</li><li>kafka</li><li>docker</li><li>git</li><li>debian</li><li>aws</li><li>jupyter</li><li>postman</li></ul>
+          </div>
+          <div class="cg">
+            <p class="cg-title mono"><span class="cg-i">参</span> the work itself</p>
+            <ul class="chips"><li>agent skills</li><li>cli design</li><li>streaming apis</li><li>data pipelines</li><li>design tokens</li><li>responsive systems</li></ul>
+          </div>
+          <div class="cg">
+            <p class="cg-title mono"><span class="cg-i">肆</span> charting next</p>
+            <ul class="chips"><li>system architecture</li><li>cloud platforms</li><li>data structures</li><li>algorithms</li></ul>
+          </div>
         </div>
-        <p class="panel-foot mono"><span class="creed-mark">//</span> curiosity is the wind · empathy is the compass · code is the vessel</p>
-      </div>
-      <div class="side-facts reveal mono">
-        <p><b>13</b> public repos</p>
-        <p><b>100%</b> open source</p>
-        <p><b>6</b> missions shipped</p>
-        <p><b>∞</b> curiosity</p>
+
+        <p class="creed mono"><span class="rule">//</span> the sky is a map, not a scoreboard</p>
       </div>
     </section>
 
-    <!-- ══ STATION 02 · ARCHIPELAGO ══ -->
-    <section id="missions" class="station wide">
-      <div class="panel wide-panel reveal">
-        <div class="panel-head mono"><span class="pn">02</span> the archipelago <span class="sl">//</span> 諸島</div>
-        <h2 class="panel-title disp">SIX MISSIONS. SIX ISLANDS.</h2>
-        <p class="panel-body">Each island below carries one shipped mission — the camera glides across them as you read. Beacons mark what's live.</p>
-      </div>
-
-      <div class="mission-row">
-        <article class="m-card reveal">
-          <div class="m-top mono"><span class="rank rank-s">S</span><span class="m-id">MS-01 · web platform</span><span class="m-live"><i class="live-dot"></i>live</span></div>
-          <h3 class="m-title">My Anime Shelf</h3>
-          <p class="m-desc">Anime discovery &amp; tracking — AniList GraphQL search, Firebase v11 auth, hand-rolled design tokens.</p>
-          <div class="m-links mono"><a href="https://sadhasri697.github.io/My-Anime-Self/" target="_blank" rel="noopener">demo ↗</a><a href="https://github.com/SadhaSri697/My-Anime-Self" target="_blank" rel="noopener">repo ↗</a></div>
-        </article>
-        <article class="m-card reveal" style="--d:.06s">
-          <div class="m-top mono"><span class="rank rank-a">A</span><span class="m-id">MS-02 · ml forecasting</span></div>
-          <h3 class="m-title">Air Quality Predictor</h3>
-          <p class="m-desc">Multi-horizon PM2.5 forecasting across 12 Beijing stations with time-series meteorological feature engineering.</p>
-          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Air-Quality-Trend-Predictor" target="_blank" rel="noopener">repo ↗</a></div>
-        </article>
-        <article class="m-card reveal" style="--d:.12s">
-          <div class="m-top mono"><span class="rank rank-a">A</span><span class="m-id">MS-03 · data science</span></div>
-          <h3 class="m-title">Student Depression Analysis</h3>
-          <p class="m-desc">EDA system probing demographic, academic &amp; lifestyle signals behind student well-being — interactive CLI.</p>
-          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Student-Depression-Analysis" target="_blank" rel="noopener">repo ↗</a></div>
-        </article>
-        <article class="m-card reveal" style="--d:.18s">
-          <div class="m-top mono"><span class="rank rank-s">S</span><span class="m-id">MS-04 · ai tooling</span></div>
-          <h3 class="m-title">web2skill (w2s)</h3>
-          <p class="m-desc">Compiles web interfaces into hierarchical SKILL.md specs so coding agents get context with zero prompt-writing.</p>
-          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Webtoskill" target="_blank" rel="noopener">repo ↗</a></div>
-        </article>
-        <article class="m-card reveal" style="--d:.24s">
-          <div class="m-top mono"><span class="rank rank-s">S</span><span class="m-id">MS-05 · automation</span></div>
-          <h3 class="m-title">Telegram Bridge for Pi</h3>
-          <p class="m-desc">Multi-session Telegram ↔ agent bridge — bidirectional token streaming, isolated concurrent bot processes.</p>
-          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Pi-telegram-main" target="_blank" rel="noopener">repo ↗</a></div>
-        </article>
-        <article class="m-card reveal" style="--d:.3s">
-          <div class="m-top mono"><span class="rank rank-b">B</span><span class="m-id">MS-06 · algorithms</span></div>
-          <h3 class="m-title">Python Programs Suite</h3>
-          <p class="m-desc">Curated algorithms &amp; data-structures playground — recursion, string science, sorting — in idiomatic Python.</p>
-          <div class="m-links mono"><a href="https://github.com/SadhaSri697/Python-programs" target="_blank" rel="noopener">repo ↗</a></div>
-        </article>
-      </div>
-      <p class="archive-note reveal mono"><a href="https://github.com/SadhaSri697?tab=repositories" target="_blank" rel="noopener">the full archive → github.com/SadhaSri697</a></p>
-    </section>
-
-    <!-- ══ STATION 03 · CONSTELLATION ══ -->
-    <section id="techniques" class="station">
-      <div class="panel reveal">
-        <div class="panel-head mono"><span class="pn">03</span> the constellation <span class="sl">//</span> 星座</div>
-        <h2 class="panel-title disp">WHAT THE STARS KNOW</h2>
-        <p class="panel-body">Look up as we fly — every technique I wield is a star in the constellations above. Four skies, four disciplines.</p>
-        <div class="const-groups mono">
-          <div class="cg"><p class="cg-t">壱 · languages</p><ul class="chips"><li>python</li><li>javascript es6+</li><li>typescript</li><li>java</li><li>c++</li><li>sql</li></ul></div>
-          <div class="cg"><p class="cg-t">弐 · frontend</p><ul class="chips"><li>react</li><li>d3.js</li><li>design tokens</li><li>responsive systems</li></ul></div>
-          <div class="cg"><p class="cg-t">参 · backend &amp; data</p><ul class="chips"><li>fastapi</li><li>graphql</li><li>firebase v11</li><li>sqlite</li><li>scikit-learn</li><li>pandas</li></ul></div>
-          <div class="cg"><p class="cg-t">肆 · infra &amp; tooling</p><ul class="chips"><li>git &amp; github</li><li>docker</li><li>debian linux</li><li>postman</li><li>jupyter</li></ul></div>
+    <!-- ══ 04 · THE GATE ══ -->
+    <section id="gate" class="station" data-station="4">
+      <div class="panel">
+        <p class="station-head mono"><span class="s-num">04</span> the gate <span class="rule">//</span> <span class="jp">門</span></p>
+        <h2 class="display">The gate<br>is open</h2>
+        <p class="body">
+          The water ends here. If you're building something with agents, data or
+          interfaces — or you just want to argue about anime and system design —
+          say hello.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-solid" href="mailto:jnanasadhasri.s@gmail.com?subject=From%20the%20lantern%20sea">write to me <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-line" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github <span aria-hidden="true">↗</span></a>
         </div>
-        <p class="panel-foot mono"><span class="creed-mark">//</span> currently charting → systems engineering · cloud pipelines · agent architectures</p>
-      </div>
-    </section>
-
-    <!-- ══ STATION 04 · PORTAL ══ -->
-    <section id="summon" class="station">
-      <div class="panel reveal summon-panel">
-        <div class="panel-head mono"><span class="pn">04</span> the portal <span class="sl">//</span> 門</div>
-        <h2 class="panel-title disp">ONE DOOR. OPEN.</h2>
-        <p class="panel-body">The flight ends here — the portal hums with everything we crossed. Step through: my inbox is open for collaborations, open source, and interesting problems.</p>
-        <div class="hero-ctas">
-          <a class="btn btn-primary mono" href="mailto:jnanasadhasri.s@gmail.com?subject=Across%20the%20isles%20—%20from%20your%20portfolio">step through ↗</a>
-          <a class="btn btn-ghost mono" href="https://github.com/SadhaSri697" target="_blank" rel="noopener">github.com/SadhaSri697 ↗</a>
-        </div>
-        <p class="panel-foot mono"><span class="creed-mark">//</span> response time: fast — the portal is always lit</p>
+        <p class="body small">
+          Or open an issue on any repository — it's the channel that's always real.
+        </p>
+        <p class="creed mono"><span class="rule">//</span> response time: fast — the lantern stays lit</p>
       </div>
     </section>
 
     <footer id="site-footer">
       <div class="footer-inner mono">
-        <p>© <span id="year">2026</span> S. SADHASRI — a world built from primitives, no assets downloaded</p>
-        <p class="footer-mid">three.js · vanilla js · zero frameworks · procedural everything</p>
-        <p>v9.0 · enchanted fantasy world · press <span class="cmdk-key">⌘</span><span class="cmdk-key">K</span></p>
+        <p>© <span id="year">2026</span> S. SADHASRI</p>
+        <p class="footer-mid">the lantern sea · every surface procedural</p>
+        <p>three.js · vanilla js · v10.0 · <span class="kbd">⌘</span><span class="kbd">K</span></p>
       </div>
     </footer>
   </main>
 
-  <!-- ══ COMMAND PALETTE ══ -->
+  <!-- ══ berth detail ══ -->
+  <div id="berth-overlay" class="berth-overlay" hidden>
+    <article class="berth-card" role="dialog" aria-modal="true" aria-labelledby="berth-title">
+      <button class="berth-close mono" id="berth-close" type="button">esc</button>
+      <p class="berth-kicker mono" id="berth-kicker"></p>
+      <h3 class="berth-title" id="berth-title"></h3>
+      <p class="berth-summary" id="berth-summary"></p>
+      <img class="berth-sigil" id="berth-sigil" alt="" width="132" height="132">
+      <ul class="berth-points" id="berth-points"></ul>
+      <p class="berth-stack mono" id="berth-stack"></p>
+      <div class="berth-links" id="berth-links"></div>
+    </article>
+  </div>
+
+  <!-- ══ command palette ══ -->
   <div id="cmdk" class="cmdk-overlay" hidden>
     <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="command palette">
       <div class="cmdk-input-row">
-        <span class="mono cmdk-prompt">▶</span>
-        <input id="cmdk-input" class="mono" type="text" placeholder="plot a course…" autocomplete="off" spellcheck="false">
+        <span class="mono cmdk-prompt" aria-hidden="true">▸</span>
+        <input id="cmdk-input" class="mono" type="text" placeholder="plot a course…" autocomplete="off" spellcheck="false" aria-label="search stations and projects">
         <span class="mono cmdk-esc">esc</span>
       </div>
-      <ul id="cmdk-list" class="mono"></ul>
+      <ul id="cmdk-list" class="mono" role="listbox" aria-label="results"></ul>
     </div>
   </div>
 
-  <script src="app.js"></script>
   <script src="three.min.js"></script>
   <script src="world.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
