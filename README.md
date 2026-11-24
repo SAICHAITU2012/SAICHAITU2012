@@ -324,10 +324,6 @@ My operating thesis: *real intelligence is forged in physics.* I train policies 
   <a href="https://saichaitu2012.github.io/SAICHAITU2012/">
     <img src="https://img.shields.io/badge/LAUNCH%203D%20PORTFOLIO-67E8F9?style=for-the-badge&logo=three.js&logoColor=0B1026&labelColor=0B1026" alt="3D Portfolio" />
   </a>
-  &nbsp;
-  <a href="https://saichaitu2012.github.io/SAICHAITU2012/ss-portfolio/">
-    <img src="https://img.shields.io/badge/DREAMSCAPE%20EDITION-F9A8D4?style=for-the-badge&logo=googlechrome&logoColor=0B1026&labelColor=0B1026" alt="Dreamscape Edition" />
-  </a>
   <br/><br/>
   <sub>WebGL canvas · spatial raycasting · real-time shader physics · zero build step</sub>
 </div>
